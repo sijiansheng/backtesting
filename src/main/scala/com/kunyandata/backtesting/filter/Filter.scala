@@ -1,6 +1,7 @@
 package com.kunyandata.backtesting.filter
 
-import org.apache.spark.rdd.RDD
+import java.util.concurrent.FutureTask
+
 
 /**
   * Created by YangShuai
@@ -8,9 +9,12 @@ import org.apache.spark.rdd.RDD
   */
 abstract class Filter {
 
-  var data: RDD[String]
+  var futureTask: FutureTask[List[String]] = null
 
-  def loadData(days: Int, score: Float)
+  def getFutureTask: FutureTask[List[String]] = futureTask
 
-  def result: RDD[String]
+  def getResult: List[String] = futureTask.get()
+
+  def filter(): List[String]
+
 }

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ysrotciv/backtesting.svg?branch=master)](https://travis-ci.org/ysrotciv/backtesting)
+
 # redis配置
 
 ## 连接配置：

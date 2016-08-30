@@ -10,17 +10,18 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  def parser (query: String) = {
+  def parser (query: String): Map[Int, String] = {
 
     val queries = query.split("\\+")
 
-    val resultTemp = queries.map(query => {
+    val result = queries.map(query => {
 
       parserByType(query)
-    })
+    }).toMap
 
-    resultTemp.mkString(",")
+    result
   }
+
 
   /**
     * 将查询条件划分为不同的查询类别，分别进行处理

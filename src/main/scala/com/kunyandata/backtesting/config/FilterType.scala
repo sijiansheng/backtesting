@@ -14,23 +14,27 @@ object FilterType extends Enumeration {
   val AnnouncementLawsuit = Value(50002, "announcement_lawsuit_")
 
   // 股票相关新闻转载量
-  val exposure = Value(402, "exposure_")
-  val exposureWeek = Value(2402, "exposureWeek_")
-  val exposureMonth = Value(4402, "exposureMonth_")
+  val Exposure = Value(402, "exposure_")
+  val ExposureWeek = Value(2402, "exposureWeek_")
+  val ExposureMonth = Value(4402, "exposureMonth_")
 
   // 股票相关新闻访问量
-  val visit = Value(401, "visit_")
-  val visitWeek = Value(2401, "visitWeek_")
-  val visitMonth = Value(4401, "visitMonth_")
+  val Visit = Value(401, "visit_")
+  val VisitWeek = Value(2401, "visitWeek_")
+  val VisitMonth = Value(4401, "visitMonth_")
 
   // 大V看好看空
-  val vipStockRise = Value(10005, "vipstockstatistic_rise_")
-  val vipStockDown = Value(10006, "vipstockstatistic_down_")
+  val VipStockRise = Value(10005, "vipstockstatistic_rise_")
+  val VipStockDown = Value(10006, "vipstockstatistic_down_")
 
   // 新闻情感
-  val sentimentPos = Value(10003, "sentiment_")
-  val sentimentNeg = Value(10004, "sentiment_")
+  val SentimentPos = Value(10003, "sentiment_")
+  val SentimentNeg = Value(10004, "sentiment_")
 
-  val trendRise = Value(10001, "trend_")
-  val trendDown = Value(10002, "trend_")
+  // 新闻访问量趋势
+  val TrendRise = Value(10001, "trend_")
+  val TrendDown = Value(10002, "trend_")
+
+  // 事件
+  val Events = Value(40002, "events_")
 }

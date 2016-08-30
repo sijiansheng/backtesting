@@ -6,8 +6,6 @@ package com.kunyandata.backtesting.config
   */
 object FilterType extends Enumeration {
 
-  val Example = Value(Int.MaxValue, "EXAMPLE")
-
   // 公告性事件
   val AnnouncementIllegal = Value(50003, "announcement_illegal_")
   val AnnouncementProfit = Value(50001, "announcement_profit_")

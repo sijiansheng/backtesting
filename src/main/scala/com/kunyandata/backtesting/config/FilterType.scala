@@ -44,15 +44,16 @@ object FilterType extends Enumeration {
   val VipStockRise = Value(10005, "vipstockstatistic_rise_")
   val VipStockDown = Value(10006, "vipstockstatistic_down_")
 
+  val ChangeInHolding = Value(40001,"change_in_holding")//增减持
+  val InstitutionStockNum = Value(40002,"institution_stock_num")//机构持股
   // 事件
-  val Events = Value(40002, "events_")
+  val Events = Value(40003, "events_")
 
   // 公告性事件
   val AnnouncementProfit = Value(50001, "announcement_profit_")
   val AnnouncementLawsuit = Value(50002, "announcement_lawsuit_")
   val AnnouncementIllegal = Value(50003, "announcement_illegal_")
 
-  val ChangeInHolding = Value(60001,"change_in_holding")//增减持
-  val InstitutionStockNum = Value(60002,"institution_stock_num")//机构持股
+
 
 }

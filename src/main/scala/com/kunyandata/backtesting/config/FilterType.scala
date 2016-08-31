@@ -14,12 +14,9 @@ object FilterType extends Enumeration {
   val TopStockRatio = Value(106,"top_stock_ratio")//十大股东持股比例
   val HolderCount= Value(107,"holder_count")//股东户数
   val FloatStockNum = Value(108,"float_stock_num")//户均持股数
-  val ChangeInHolding = Value(40001,"change_in_holding")//增减持
-  val InstitutionStockNum = Value(40001,"institution_stock_num")//机构持股
-
+  val AbsoluteChangePercent = Value(201,"absolute_change_percent_")//涨跌幅（绝对值）
   val IncChangePercent = Value(202,"inc_change_percent_")//涨幅
   val DecChangePercent = Value(203,"dec_change_percent_")//跌幅
-  val AbsoluteChangePercent = Value(201,"absolute_change_percent_")//涨跌幅（绝对值）
   val Amplitude =Value(204,"amplitude_")//振幅
   val TurnoverRation = Value(205,"turnoverratio_")//换手率
   val Volume = Value(206,"volume_")//成交量
@@ -27,14 +24,12 @@ object FilterType extends Enumeration {
   val SharePrice = Value(208,"share_price_")//股价
   val ChangePercent = Value(209,"change_percent_")//涨跌幅，收益率
 
-  // 股票相关新闻访问量
+  // 股票相关新闻访问量和股票相关新闻转载量
   val Visit = Value(401, "visit_")
-  val VisitWeek = Value(2401, "visitWeek_")
-  val VisitMonth = Value(4401, "visitMonth_")
-
-  // 股票相关新闻转载量
   val Exposure = Value(402, "exposure_")
+  val VisitWeek = Value(2401, "visitWeek_")
   val ExposureWeek = Value(2402, "exposureWeek_")
+  val VisitMonth = Value(4401, "visitMonth_")
   val ExposureMonth = Value(4402, "exposureMonth_")
 
   // 新闻访问量趋势
@@ -56,4 +51,8 @@ object FilterType extends Enumeration {
   val AnnouncementProfit = Value(50001, "announcement_profit_")
   val AnnouncementLawsuit = Value(50002, "announcement_lawsuit_")
   val AnnouncementIllegal = Value(50003, "announcement_illegal_")
+
+  val ChangeInHolding = Value(60001,"change_in_holding")//增减持
+  val InstitutionStockNum = Value(60002,"institution_stock_num")//机构持股
+
 }

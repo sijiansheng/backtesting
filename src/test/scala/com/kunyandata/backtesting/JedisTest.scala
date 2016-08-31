@@ -1,6 +1,7 @@
+package com.kunyandata.backtesting
+
 import com.kunyandata.backtesting.config.Configuration
 import com.kunyandata.backtesting.io.RedisHandler
-import com.kunyandata.backtesting.util.DateUtil
 
 import scala.collection.mutable
 
@@ -14,7 +15,7 @@ object JedisTest extends App {
   val redisMap = config._1
   RedisHandler.init(redisMap.get("ip").get, redisMap.get("port").get.toInt, redisMap.get("auth").get, redisMap.get("db").get.toInt)
 
-  val jedis = RedisHandler.getJedis
+  val jedis = RedisHandler.getInstance().getJedis
   val count = jedis.zcard("heat_2016-07-21")
   val result = jedis.zrangeWithScores("heat_2016-07-21", 0, -1)
   val iterator = result.iterator()

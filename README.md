@@ -6,4 +6,5 @@
 
 #协议
 地址说明：
-http://wiki.smartdata-x.com/index.php/Back/kfreq/backtest
+请求格式:http://wiki.smartdata-x.com/index.php/Back/kfreq/backtest
+返回格式:http://wiki.smartdata-x.com/index.php/Back/kfrly/backtest

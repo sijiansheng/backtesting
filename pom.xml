@@ -24,6 +24,11 @@
             <artifactId>spark-core_2.11</artifactId>
             <version>1.5.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.11</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
     
 </project>

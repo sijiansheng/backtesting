@@ -6,7 +6,6 @@ import com.kunyandata.backtesting.config.Configuration
 import com.kunyandata.backtesting.filter.common.{ContiRankFilter, ContiValueFilter}
 import com.kunyandata.backtesting.io.{RedisHandler, KafkaProducerHandler, KafkaConsumerHandler}
 import com.kunyandata.backtesting.logger.BKLogger
-import org.apache.spark.{SparkContext, SparkConf}
 
 /**
   * Created by YangShuai

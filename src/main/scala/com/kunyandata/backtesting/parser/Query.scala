@@ -10,13 +10,13 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  def parser (query: String): Map[Int, String] = {
+  def parse(query: String): Map[Int, String] = {
 
     val queries = query.split("\\+")
 
     val result = queries.map(query => {
 
-      parserByType(query)
+      parseByType(query)
     }).toMap
 
     result
@@ -28,7 +28,7 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  private def parserByType(query: String) = {
+  private def parseByType(query: String) = {
 
     query.substring(0, 2) match {
 

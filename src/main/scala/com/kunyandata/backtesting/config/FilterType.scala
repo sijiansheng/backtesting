@@ -6,6 +6,27 @@ package com.kunyandata.backtesting.config
   */
 object FilterType extends Enumeration {
 
+  val TotalEquity= Value(101,"total_equity") //总股本
+  val FloatEquity=Value(102,"float_equity") //流通股本
+  val MarketValue = Value(103,"market_value")//总市值
+  val LiquidMarketValue= Value(104,"liquid_market_value")//流通市值
+  val LiquidScale = Value(105,"liquid_scale") //流通比例
+  val TopStockRatio = Value(106,"top_stock_ratio")//十大股东持股比例
+  val HolderCount= Value(107,"holder_count")//股东户数
+  val FloatStockNum = Value(108,"float_stock_num")//户均持股数
+  val ChangeInHolding = Value(40001,"change_in_holding")//增减持
+  val InstitutionStockNum = Value(40001,"institution_stock_num")//机构持股
+
+  val IncChangePercent = Value(202,"inc_change_percent_")//涨幅
+  val DecChangePercent = Value(203,"dec_change_percent_")//跌幅
+  val AbsoluteChangePercent = Value(201,"absolute_change_percent_")//涨跌幅（绝对值）
+  val Amplitude =Value(204,"amplitude_")//振幅
+  val TurnoverRation = Value(205,"turnoverratio_")//换手率
+  val Volume = Value(206,"volume_")//成交量
+  val Turnover = Value(207,"turnover_")//成交额
+  val SharePrice = Value(208,"share_price_")//股价
+  val ChangePercent = Value(209,"change_percent_")//涨跌幅，收益率
+
   // 股票相关新闻访问量
   val Visit = Value(401, "visit_")
   val VisitWeek = Value(2401, "visitWeek_")

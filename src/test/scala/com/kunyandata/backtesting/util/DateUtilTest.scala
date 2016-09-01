@@ -11,7 +11,7 @@ class DateUtilTest extends FlatSpec with Matchers {
   it should "return a negative integer represents the offset between the target date and today" in {
 
     val dateString = "2016-08-29"
-    val offset = DateUtil.getOffset(dateString)
+    val offset = CommonUtil.getOffset(dateString)
     println(s"the offset between $dateString and today is $offset")
 
   }

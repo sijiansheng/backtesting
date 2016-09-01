@@ -44,6 +44,11 @@ object FilterType extends Enumeration {
   val VipStockRise = Value(15001, "vipstockstatistic_rise_") // 大V看好
   val VipStockDown = Value(15002, "vipstockstatistic_down_") // 大V看空
 
+  //行为数据
+  val HeatValueDiff = Value(150003, "diff_heat_|conti_value") //查看热度连续X天上涨超过X
+  val HeatRank = Value(150004, "count_heat_|conti_rank") //查看热度连续X天出现在topX
+  val HeatValue = Value(150005, "count_heat_|conti_value") //查看热度连续X天超过X
+
   val ChangeInHolding = Value(40001,"change_in_holding") // 增减持
   val InstitutionStockNum = Value(40002,"institution_stock_num") // 机构持股
   // 事件

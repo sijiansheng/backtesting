@@ -12,7 +12,7 @@ class QueryTest extends FlatSpec with Matchers {
   it should "change an option string to a map" in {
 
     val str = "4:新闻情感连续7天都是负面情绪"
-    val map = Query.parser(str)
+    val map = Query.parse(str)
 
     map.keySet.foreach(key => {
 

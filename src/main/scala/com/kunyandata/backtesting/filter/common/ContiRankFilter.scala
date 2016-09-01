@@ -4,7 +4,7 @@ import java.util.concurrent.{Callable, FutureTask}
 
 import com.kunyandata.backtesting.filter.Filter
 import com.kunyandata.backtesting.io.RedisHandler
-import com.kunyandata.backtesting.util.DateUtil
+import com.kunyandata.backtesting.util.CommonUtil
 
 import scala.collection.mutable
 
@@ -13,7 +13,7 @@ import scala.collection.mutable
   * Created by YangShuai
   * Created on 2016/8/24.
   */
-class ContiRankFilter private(prefix: String, value: Int, days: Int, start: Int, end: Int) extends Filter {
+class ContiRankFilter private(prefix: String, days: Int, rank: Int, start: Int, end: Int) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -22,9 +22,9 @@ class ContiRankFilter private(prefix: String, value: Int, days: Int, start: Int,
 
     for (i <- start to end) {
 
-      val key = prefix + DateUtil.getDateStr(i)
+      val key = prefix + CommonUtil.getDateStr(i)
       val jedis = RedisHandler.getInstance().getJedis
-      val result = jedis.zrevrange(key, 0, -1).toArray().take(value)
+      val result = jedis.zrevrange(key, 0, -1).toArray().take(rank)
 
       map.foreach( x => {
 
@@ -55,9 +55,9 @@ class ContiRankFilter private(prefix: String, value: Int, days: Int, start: Int,
 
 object ContiRankFilter {
 
-  def apply(prefix: String, value: Int, days: Int, start: Int, end: Int): ContiRankFilter = {
+  def apply(prefix: String, days: Int, rank: Int, start: Int, end: Int): ContiRankFilter = {
 
-    val filter = new ContiRankFilter(prefix, value, days, start, end)
+    val filter = new ContiRankFilter(prefix, days, rank, start, end)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

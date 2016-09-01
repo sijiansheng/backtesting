@@ -37,6 +37,7 @@ class PlayJsonTest extends FlatSpec with Matchers {
     val jsValue = Json.obj("1" -> "a", "list" -> list)
     println(Json.stringify(jsValue))
 
+    println(Long.MaxValue)
   }
 
 }

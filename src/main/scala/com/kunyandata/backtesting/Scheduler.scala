@@ -46,33 +46,32 @@ object Scheduler {
 
       while (it.hasNext()) {
 
-        val map = mutable.Map[String, Any]()
-
         val message = new String(it.next().message())
+        println(message)
         val jsonValue = Json.parse(message)
 
         val uid = (jsonValue \ "uid").as[Long]
-        val session = (jsonValue \ "session").as[String]
+        val session = (jsonValue \ "session").as[Long]
         val condition = (jsonValue \ "condition").as[String]
         val startDate = (jsonValue \ "start_time").as[String]
         val endDate = (jsonValue \ "end_time").as[String]
 
         val queryMap = Query.parse(condition)
 
-        System.out.println(message)
+        System.out.println(queryMap)
         println(System.currentTimeMillis())
         val result = filter(queryMap, startDate, endDate)
 
-        map.put("uid", uid.toString)
-        map.put("session", session)
-        map.put("start_time", startDate)
-        map.put("end_time", endDate)
-        map.put("stocks", result._1)
-        map.put("wrong_condition", result._2)
+        val resultValue = Json.obj(
+          "uid" -> uid,
+          "session" -> session,
+          "start_time" -> startDate,
+          "end_time" -> endDate,
+          "stocks" -> result._1,
+          "wrong_condition" -> result._2
+        )
 
-
-        println("result: " + result)
-//        producerHandler.sendMessage(Json.toJson(map).toString())
+        producerHandler.sendMessage(Json.stringify(resultValue))
       }
 
     }
@@ -95,15 +94,21 @@ object Scheduler {
 
       val key = pair._1
       val values = pair._2.split(",")
-      val infos = FilterType.apply(key).toString.split("|")
+      val infos = FilterType.apply(key).toString.split("\\|")
       val prefix = infos(0)
       val filterType = infos(1)
 
+      println(FilterType.apply(key).toString)
+
       filterType match {
+        case "everyday_value" =>
+          filters += ContiValueFilter(prefix, endOffset - startOffset + 1, values(0).toInt, values(1).toInt, startOffset, endOffset)
         case "conti_value" =>
           filters += ContiValueFilter(prefix, values(0).toInt, values(1).toInt, values(2).toInt, startOffset, endOffset)
         case "conti_rank" =>
           filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+        case _ =>
+          println("unknown")
       }
 
     })

@@ -242,10 +242,10 @@ object Rules {
         (keyNum, value.mkString(","))
       } else if (value.length == 1 && query.contains("大于")) {
 
-        (keyNum, s"${value(0)},MAX")
+        (keyNum, s"${value(0)},${Integer.MAX_VALUE}")
       } else if (value.length == 1 && query.contains("小于")) {
 
-        (keyNum, s"MIN,${value(0)}")
+        (keyNum, s"${Integer.MIN_VALUE},${value(0)}")
       } else if (value.length == 1 && query.contains("等于")) {
 
         (keyNum, s"${value(0)},${value(0)}")

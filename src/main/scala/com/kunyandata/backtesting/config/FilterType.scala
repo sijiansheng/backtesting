@@ -25,7 +25,7 @@ object FilterType extends Enumeration {
   val ChangePercent = Value(209, "change_percent_") // 涨跌幅，收益率
 
   // 股票相关新闻访问量和股票相关新闻转载量
-  val Visit = Value(401, "visit_|everyday_value") // 股票相关新闻的日访问量
+  val Visit = Value(401, "visit_|all_days_value") // 股票相关新闻的日访问量
   val Exposure = Value(402, "exposure_") // 股票相关新闻的日转载量
   val VisitWeek = Value(2401, "visitWeek_") // 股票相关新闻的周访问量
   val ExposureWeek = Value(2402, "exposureWeek_") // 股票相关新闻的周转载量

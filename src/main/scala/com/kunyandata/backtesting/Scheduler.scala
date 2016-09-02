@@ -101,7 +101,7 @@ object Scheduler {
       println(FilterType.apply(key).toString)
 
       filterType match {
-        case "everyday_value" =>
+        case "all_days_value" =>
           filters += ContiValueFilter(prefix, endOffset - startOffset + 1, values(0).toInt, values(1).toInt, startOffset, endOffset)
         case "conti_value" =>
           filters += ContiValueFilter(prefix, values(0).toInt, values(1).toInt, values(2).toInt, startOffset, endOffset)

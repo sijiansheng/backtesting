@@ -70,9 +70,9 @@ class AllDayValueFilter private(prefix: String, min: Int, max: Int, start: Int, 
 
 object AllDayValueFilter {
 
-  def apply(prefix: String, min: Int, max: Int, start: Int, end: Int): ContiValueFilter = {
+  def apply(prefix: String, min: Int, max: Int, start: Int, end: Int): AllDayValueFilter = {
 
-    val filter = new ContiValueFilter(prefix, min, max, start, end)
+    val filter = new AllDayValueFilter(prefix, min, max, start, end)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

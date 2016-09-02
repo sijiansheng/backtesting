@@ -27,9 +27,9 @@ class SingleValueFilter private(prefix: String, min: Int, max: Int) extends Filt
 
 object SingleValueFilter {
 
-  def apply(prefix: String, min: Int, max: Int): ContiValueFilter = {
+  def apply(prefix: String, min: Int, max: Int): SingleValueFilter = {
 
-    val filter = new ContiValueFilter(prefix, min, max)
+    val filter = new SingleValueFilter(prefix, min, max)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

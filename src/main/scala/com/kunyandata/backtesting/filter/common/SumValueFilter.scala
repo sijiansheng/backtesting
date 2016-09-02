@@ -41,9 +41,9 @@ class SumValueFilter private(prefix: String, min: Int, max: Int, start: Int, end
 
 object SumValueFilter {
 
-  def apply(prefix: String, min: Int, max: Int, start: Int, end: Int): ContiValueFilter = {
+  def apply(prefix: String, min: Int, max: Int, start: Int, end: Int): SumValueFilter = {
 
-    val filter = new ContiValueFilter(prefix, min, max, start, end)
+    val filter = new SumValueFilter(prefix, min, max, start, end)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

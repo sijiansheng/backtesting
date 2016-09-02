@@ -9,6 +9,7 @@ import com.kunyandata.backtesting.util.CommonUtil
 import scala.collection.mutable
 
 /**
+  * 每日，每周或每月均大（小）于XXX
   * Created by YangShuai
   * Created on 2016/9/1.
   */
@@ -17,34 +18,47 @@ class AllDayValueFilter private(prefix: String, min: Int, max: Int, start: Int, 
   override def filter(): List[String] = {
 
     val resultSet = mutable.Set[String]()
+    var init = false
+    var count = 0
 
     for (i <- start to end) {
 
       val key = prefix + CommonUtil.getDateStr(i)
       val jedis = RedisHandler.getInstance().getJedis
-      val result = jedis.zrangeByScore(key, min, max)
 
-      if (i == start) {
+      if (jedis.exists(key)) {
 
-        val iterator = result.iterator()
+        val result = jedis.zrangeByScore(key, min, max)
 
-        while (iterator.hasNext) {
-          val code = iterator.next()
-          resultSet.add(code)
+        if (i == start + count && !init) {
+
+          val iterator = result.iterator()
+
+          while (iterator.hasNext) {
+            val code = iterator.next()
+            resultSet.add(code)
+          }
+
+          init = true
+
+        } else {
+
+          val iterator = resultSet.iterator
+
+          while (iterator.hasNext) {
+
+            val code = iterator.next()
+
+            if (!result.contains(code))
+              resultSet.remove(code)
+
+          }
+
         }
 
       } else {
 
-        val iterator = resultSet.iterator
-
-        while (iterator.hasNext) {
-
-          val code = iterator.next()
-
-          if (!result.contains(code))
-            resultSet.remove(code)
-
-        }
+        count += 1
 
       }
 

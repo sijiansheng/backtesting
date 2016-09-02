@@ -7,6 +7,8 @@ import com.kunyandata.backtesting.io.RedisHandler
 import scala.collection.JavaConversions._
 
 /**
+  * 针对不需要每天（周，月）存一份的数据的过滤
+  * 例如：总股本大于X亿
   * Created by YangShuai
   * Created on 2016/9/2.
   */

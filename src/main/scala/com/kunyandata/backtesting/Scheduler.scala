@@ -4,7 +4,7 @@ import java.util.concurrent.{ExecutorService, Executors}
 
 import com.kunyandata.backtesting.config.{FilterType, Configuration}
 import com.kunyandata.backtesting.filter.Filter
-import com.kunyandata.backtesting.filter.common.{ContiRankFilter, ContiValueFilter}
+import com.kunyandata.backtesting.filter.common._
 import com.kunyandata.backtesting.io.{RedisHandler, KafkaProducerHandler, KafkaConsumerHandler}
 import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.parser.Query
@@ -102,11 +102,15 @@ object Scheduler {
 
       filterType match {
         case "all_days_value" =>
-          filters += ContiValueFilter(prefix, endOffset - startOffset + 1, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          filters += AllDayValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
         case "conti_value" =>
           filters += ContiValueFilter(prefix, values(0).toInt, values(1).toInt, values(2).toInt, startOffset, endOffset)
         case "conti_rank" =>
           filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+        case "single_value" =>
+          filters += SingleValueFilter(prefix, values(0).toInt, values(1).toInt)
+        case "sum_value" =>
+          filters += SumValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
         case _ =>
           println("unknown")
       }

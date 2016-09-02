@@ -14,6 +14,7 @@ object FilterType extends Enumeration {
   val TopStockRatio = Value(106, "top_stock_ratio")// 十大股东持股比例
   val HolderCount= Value(107, "holder_count") // 股东户数
   val FloatStockNum = Value(108, "float_stock_num") // 户均持股数
+  val InstitutionStockNum = Value(109,"institution_stock_num") // 机构持股
   val AbsoluteChangePercent = Value(201, "absolute_change_percent_") // 涨跌幅（绝对值）
   val IncChangePercent = Value(202, "inc_change_percent_") // 涨幅
   val DecChangePercent = Value(203, "dec_change_percent_") // 跌幅
@@ -45,7 +46,7 @@ object FilterType extends Enumeration {
   val VipStockDown = Value(15002, "vipstockstatistic_down_") // 大V看空
 
   val ChangeInHolding = Value(40001,"change_in_holding") // 增减持
-  val InstitutionStockNum = Value(40002,"institution_stock_num") // 机构持股
+
   // 事件
   val Events = Value(40003, "events_") // 事件相关股票
 

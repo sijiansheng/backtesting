@@ -6,15 +6,15 @@ package com.kunyandata.backtesting.config
   */
 object FilterType extends Enumeration {
 
-  val TotalEquity= Value(101, "total_equity") // 总股本
-  val FloatEquity=Value(102, "float_equity") // 流通股本
-  val MarketValue = Value(103, "market_value") // 总市值
-  val LiquidMarketValue= Value(104, "liquid_market_value") // 流通市值
-  val LiquidScale = Value(105, "liquid_scale") // 流通比例
-  val TopStockRatio = Value(106, "top_stock_ratio")// 十大股东持股比例
-  val HolderCount= Value(107, "holder_count") // 股东户数
-  val FloatStockNum = Value(108, "float_stock_num") // 户均持股数
-  val AbsoluteChangePercent = Value(201, "absolute_change_percent_") // 涨跌幅（绝对值）
+  val TotalEquity= Value(101, "total_equity|single_value") // 总股本
+  val FloatEquity=Value(102, "float_equity|single_value") // 流通股本
+  val MarketValue = Value(103, "market_value|single_value") // 总市值
+  val LiquidMarketValue= Value(104, "liquid_market_value|single_value") // 流通市值
+  val LiquidScale = Value(105, "liquid_scale|single_value") // 流通比例
+  val TopStockRatio = Value(106, "top_stock_ratio|single_value")// 十大股东持股比例
+  val HolderCount= Value(107, "holder_count|single_value") // 股东户数
+  val FloatStockNum = Value(108, "float_stock_num|single_value") // 户均持股数
+  val AbsoluteChangePercent = Value(201, "absolute_change_percent_|all_days_value") // 涨跌幅（绝对值）
   val IncChangePercent = Value(202, "inc_change_percent_") // 涨幅
   val DecChangePercent = Value(203, "dec_change_percent_") // 跌幅
   val Amplitude =Value(204, "amplitude_") // 振幅

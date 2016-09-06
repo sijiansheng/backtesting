@@ -6,6 +6,8 @@ package com.kunyandata.backtesting.config
   */
 object FilterType extends Enumeration {
 
+  val Error = Value(-1, "error")
+
   val TotalEquity= Value(101, "total_equity|single_value") // 总股本
   val FloatEquity=Value(102, "float_equity|single_value") // 流通股本
   val MarketValue = Value(103, "market_value|single_value") // 总市值
@@ -52,7 +54,7 @@ object FilterType extends Enumeration {
   val ChangeInHolding = Value(40001,"change_in_holding|single_value") // 增减持
   val InstitutionStockNum = Value(40002,"institution_stock_num|single_value") // 机构持股
   // 事件
-  val Events = Value(40003, "events_") // 事件相关股票
+  val Events = Value(40003, "events_|direct") // 事件相关股票
 
   // 公告性事件
   val AnnouncementProfit = Value(50001, "announcement_profit_|sum_value") // 公告赢利预增（现在没有赢利预增的具体数值，只有次数）

@@ -1,10 +1,10 @@
 package com.kunyandata.backtesting
 
+import java.util.NoSuchElementException
 import java.util.concurrent.{ExecutorService, Executors}
 
 import com.kunyandata.backtesting.config.{FilterType, Configuration}
-import com.kunyandata.backtesting.filter.Filter
-import com.kunyandata.backtesting.filter.common._
+import com.kunyandata.backtesting.filter._
 import com.kunyandata.backtesting.io.{RedisHandler, KafkaProducerHandler, KafkaConsumerHandler}
 import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.parser.Query
@@ -59,7 +59,6 @@ object Scheduler {
         val queryMap = Query.parse(condition)
 
         System.out.println(queryMap)
-        println(System.currentTimeMillis())
         val result = filter(queryMap, startDate, endDate)
 
         val resultValue = Json.obj(
@@ -92,13 +91,28 @@ object Scheduler {
 
     queryMap.foreach(pair => {
 
+      var prefix = ""
+      var filterType = ""
+
       val key = pair._1
       val values = pair._2.split(",")
-      val infos = FilterType.apply(key).toString.split("\\|")
-      val prefix = infos(0)
-      val filterType = infos(1)
 
-      println(FilterType.apply(key).toString)
+      try {
+
+        val infos = FilterType.apply(key).toString.split("\\|")
+        prefix = infos(0)
+        filterType = infos(1)
+
+      } catch {
+
+        case e: NoSuchElementException =>
+        case e: IndexOutOfBoundsException =>
+          e.printStackTrace()
+          println(FilterType.apply(key).toString)
+
+      }
+
+      println("Value: " + FilterType.apply(key).toString)
 
       filterType match {
         case "all_days_value" =>
@@ -111,6 +125,8 @@ object Scheduler {
           filters += SingleValueFilter(prefix, values(0).toInt, values(1).toInt)
         case "sum_value" =>
           filters += SumValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+        case "direct" =>
+          filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
         case _ =>
           println("unknown")
       }

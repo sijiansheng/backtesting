@@ -1,4 +1,4 @@
-package com.kunyandata.backtesting.parser
+package scala.com.kunyandata.backtesting.parser
 
 import scala.collection.immutable.HashMap
 
@@ -53,20 +53,20 @@ object Rules {
 
         // 非大于小于类型的数据操作码
         // 增减持
-//        ("大股东增股", 40001),
-//        ("大股东减股", 40001),
+        //        ("大股东增股", 40001),
+        //        ("大股东减股", 40001),
         ("高管增股", 40001),
         ("高管减股", 40001))),
 
-        // 是否持股
-//        ("基金持股", 40002),
-//        ("券商持股", 40002),
-//        ("社保持股", 40002),
-//        ("信托持股", 40002),
-//        ("保险持股", 40002),
-//        ("QFII持股", 40002),
-//        ("国家队持股", 40002))),
-//        ("机构持股", 40002))),
+      // 是否持股
+      //        ("基金持股", 40002),
+      //        ("券商持股", 40002),
+      //        ("社保持股", 40002),
+      //        ("信托持股", 40002),
+      //        ("保险持股", 40002),
+      //        ("QFII持股", 40002),
+      //        ("国家队持股", 40002))),
+      //        ("机构持股", 40002))),
 
       (2, HashMap(
 
@@ -209,7 +209,9 @@ object Rules {
         ("查看热度连续x天以上上涨超过x", 15003),
         ("查看热度连续x天以上出现在topx", 15004),
         ("查看热度连续x天超过x", 15005),
-        ("查看热度连续x天以上超过x", 15005))))
+        ("查看热度连续x天以上超过x", 15005))),
+      (5, HashMap(("事件", 40003)))
+    )
   }
 
   /**
@@ -243,7 +245,6 @@ object Rules {
       val value = regex.findAllIn(query).toArray
 
       if (value.length == 2 && value(0) < value(1)) {
-
 
         (keyNum, value.mkString(","))
       } else if (value.length == 1 && query.contains("大于")) {
@@ -285,12 +286,15 @@ object Rules {
 
       if (keyNum == -1) {
 
-        // 如果key为-1，则认为该query不存在条件模板库中，直接返回该query
-        (keyNum, s"查询条件错误：$query")
-      }
-      else if (typ == 4) {
+        if (typ == 5) {
 
-        (40003, query)
+          (40003, query)
+        }
+        else {
+
+          // 如果key为-1，则认为该query不存在条件模板库中，直接返回该query
+          (keyNum, s"查询条件错误：$query")
+        }
       }
       else if (typ == 1) {
 

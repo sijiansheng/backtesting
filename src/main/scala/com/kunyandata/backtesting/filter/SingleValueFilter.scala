@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
   * Created by YangShuai
   * Created on 2016/9/2.
   */
-class SingleValueFilter private(prefix: String, min: Int, max: Int) extends Filter {
+class SingleValueFilter private(prefix: String, min: Double, max: Double) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -27,7 +27,7 @@ class SingleValueFilter private(prefix: String, min: Int, max: Int) extends Filt
 
 object SingleValueFilter {
 
-  def apply(prefix: String, min: Int, max: Int): SingleValueFilter = {
+  def apply(prefix: String, min: Double, max: Double): SingleValueFilter = {
 
     val filter = new SingleValueFilter(prefix, min, max)
 

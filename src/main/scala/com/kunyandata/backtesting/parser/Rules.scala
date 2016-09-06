@@ -46,22 +46,27 @@ object Rules {
         ("户均持股数小于x万", 108),
         ("户均持股数等于x万", 108),
         ("户均持股数大于x万小于x万", 108),
+        ("机构持股数大于x万", 109),
+        ("机构持股数小于x万", 109),
+        ("机构持股数等于x万", 109),
+        ("机构持股数大于x万小于x万", 109),
 
         // 非大于小于类型的数据操作码
         // 增减持
-        ("大股东增股", 40001),
-        ("大股东减股", 40001),
+        //        ("大股东增股", 40001),
+        //        ("大股东减股", 40001),
         ("高管增股", 40001),
-        ("高管减股", 40001),
+        ("高管减股", 40001))),
 
-        // 是否持股
-        ("基金持股", 40002),
-        ("券商持股", 40002),
-        ("社保持股", 40002),
-        ("信托持股", 40002),
-        ("保险持股", 40002),
-        ("QFII持股", 40002),
-        ("国家队持股", 40002))),
+      // 是否持股
+      //        ("基金持股", 40002),
+      //        ("券商持股", 40002),
+      //        ("社保持股", 40002),
+      //        ("信托持股", 40002),
+      //        ("保险持股", 40002),
+      //        ("QFII持股", 40002),
+      //        ("国家队持股", 40002))),
+      //        ("机构持股", 40002))),
 
       (2, HashMap(
 
@@ -204,7 +209,9 @@ object Rules {
         ("查看热度连续x天以上上涨超过x", 15003),
         ("查看热度连续x天以上出现在topx", 15004),
         ("查看热度连续x天超过x", 15005),
-        ("查看热度连续x天以上超过x", 15005))))
+        ("查看热度连续x天以上超过x", 15005))),
+      (5, HashMap(("事件", 40003)))
+    )
   }
 
   /**
@@ -233,27 +240,53 @@ object Rules {
 
       // 如果keyNum小于1000，说明该条件为大于小于类型的查询条件
       // 生成获取数字的正则
-      val regex =
-        """\d+""".r
+      val regex = """\d+""".r
+      val percent = query.contains("%")
       val value = regex.findAllIn(query).toArray
 
-      if (value.length == 2 && value(0) < value(1)) {
+      if (value.length == 2 && value(0).toLong < value(1).toLong) {
 
-        (keyNum, value.mkString(","))
+        if (percent) {
+
+          (keyNum, value.map(x => x.toDouble / 100).mkString(","))
+        } else {
+
+          (keyNum, value.mkString(","))
+        }
       } else if (value.length == 1 && query.contains("大于")) {
 
-        (keyNum, s"${value(0)},${Integer.MAX_VALUE}")
+        val max = Int.MaxValue
+        if (percent) {
+
+          val min = value.map(x => x.toDouble / 100).apply(0)
+          (keyNum, s"$min,$max")
+        } else {
+
+          (keyNum, s"${value(0)},${Int.MaxValue}")
+        }
       } else if (value.length == 1 && query.contains("小于")) {
 
-        (keyNum, s"${Integer.MIN_VALUE},${value(0)}")
+        val min = Int.MinValue
+        if (percent) {
+
+          val max = value.map(x => x.toDouble / 100).apply(0)
+          (keyNum, s"$min,$max")
+        } else {
+
+          val max = value(0)
+          (keyNum, s"$min,$max")
+        }
       } else if (value.length == 1 && query.contains("等于")) {
 
-        (keyNum, s"${value(0)},${value(0)}")
+        val min = value(0)
+        val max = value(0)
+        (keyNum, s"$min,$max")
       } else {
 
         (-1, s"查询条件错误：$query")
       }
-    } else {
+    }
+    else {
 
       (0, "")
     }
@@ -279,19 +312,31 @@ object Rules {
 
       if (keyNum == -1) {
 
-        // 如果key为-1，则认为该query不存在条件模板库中，直接返回该query
-        (keyNum, s"查询条件错误：$query")
-      }
-      else if (typ == 4) {
+        if (typ == 5) {
 
-        (40003, query)
+          (40003, query)
+        }
+        else {
+
+          // 如果key为-1，则认为该query不存在条件模板库中，直接返回该query
+          (keyNum, s"查询条件错误：$query")
+        }
       }
       else if (typ == 1) {
 
         keyNum match {
 
-          case 40001 => (40001, query)
-          case 40002 => (40002, query)
+          case 40001 => if (query.contains("增持")) {
+
+            (keyNum, "1,1")
+          } else if (query.contains("减持")) {
+
+            (keyNum, "0,0")
+          } else {
+
+            (-1, s"查询条件错误：$query")
+          }
+          case 40002 => (keyNum, s"0,${Int.MaxValue}")
           case _ => (-1, s"查询条件错误：$query")
         }
       } else {
@@ -337,9 +382,9 @@ object Rules {
         case "盈利预增x%" => (keyNum, s"${value(0)},${value(0)}")
         case "诉讼仲裁x次" => (keyNum, s"${value(0)},${value(0)}")
         case "违规处罚x次" => (keyNum, s"${value(0)},${value(0)}")
-        case "盈利预增x%以上" => (keyNum, s"${value(0)},MAX")
-        case "诉讼仲裁x次以上" => (keyNum, s"${value(0)},MAX")
-        case "违规处罚x次以上" => (keyNum, s"${value(0)},MAX")
+        case "盈利预增x%以上" => (keyNum, s"${value(0)},${Int.MaxValue}")
+        case "诉讼仲裁x次以上" => (keyNum, s"${value(0)},${Int.MaxValue}")
+        case "违规处罚x次以上" => (keyNum, s"${value(0)},${Int.MaxValue}")
         case "新闻趋势连续x天上涨" => (keyNum, s"${value(0)},1,1")
         case "新闻趋势连续x天下降" => (keyNum, s"${value(0)},-1,-1")
         case "新闻趋势连续x天以上上涨" => (keyNum, s"${value(0)},1,1")
@@ -356,6 +401,7 @@ object Rules {
         case "连续x天被x个大V以上看空" => (keyNum, s"${value(0)},${value(1)},${value(1)}")
         case "连续x~x天被x个大V看好" => (keyNum, s"${value(0)},${value(2)},${value(2)}")
         case "连续x~x天被x个大V看空" => (keyNum, s"${value(0)},${value(2)},${value(2)}")
+
         case "连续x天被x~x个大V看好" =>
           if (value(1) < value(2)) {
 
@@ -373,12 +419,13 @@ object Rules {
 
             (-1, s"查询条件错误：$query")
           }
-        case "查看热度连续x天上涨超过x" => (keyNum, s"${value(0)},${value(1)},MAX")
+
+        case "查看热度连续x天上涨超过x" => (keyNum, s"${value(0)},${value(1)},${Int.MaxValue}")
         case "查看热度连续x天出现在topx" => (keyNum, s"${value(0)},1,${value(1)}")
-        case "查看热度连续x天以上上涨超过x" => (keyNum, s"${value(0)},${value(1)},MAX")
+        case "查看热度连续x天以上上涨超过x" => (keyNum, s"${value(0)},${value(1)},${Int.MaxValue}")
         case "查看热度连续x天以上出现在topx" => (keyNum, s"${value(0)},1,${value(1)}")
-        case "查看热度连续x天超过x" => (keyNum, s"${value(0)},${value(1)},MAX")
-        case "查看热度连续x天以上超过x" => (keyNum, s"${value(0)},${value(1)},MAX")
+        case "查看热度连续x天超过x" => (keyNum, s"${value(0)},${value(1)},${Int.MaxValue}")
+        case "查看热度连续x天以上超过x" => (keyNum, s"${value(0)},${value(1)},${Int.MaxValue}")
         case _ => (-1, s"查询条件错误：$query")
       }
 

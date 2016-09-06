@@ -51,7 +51,7 @@ object FilterType extends Enumeration {
   val HeatRank = Value(150004, "count_heat_|conti_rank") //查看热度连续X天出现在topX
   val HeatValue = Value(150005, "count_heat_|conti_value") //查看热度连续X天超过X
 
-  val ChangeInHolding = Value(40001,"change_in_holding|single_value") // 增减持
+  val ChangeInHolding = Value(40001,"over_or_under_weight_holding|single_value") // 增减持
   val InstitutionStockNum = Value(40002,"institution_stock_num|single_value") // 机构持股
   // 事件
   val Events = Value(40003, "events_|direct") // 事件相关股票

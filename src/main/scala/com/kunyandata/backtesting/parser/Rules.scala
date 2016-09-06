@@ -1,4 +1,4 @@
-package scala.com.kunyandata.backtesting.parser
+package com.kunyandata.backtesting.parser
 
 import scala.collection.immutable.HashMap
 

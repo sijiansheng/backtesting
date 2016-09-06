@@ -17,7 +17,7 @@ object Query {
     val result = queries.map(query => {
 
       parseByType(query)
-    }).toMap
+    }).groupBy(_._1).map(x => (x._1, x._2.map(_._2).mkString(",")))
 
     result
   }

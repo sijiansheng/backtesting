@@ -14,9 +14,7 @@ class KafkaProducerHandler(brokerList: String, topic: String) {
 
   def sendMessage(message: String): Unit = {
     val keyedMessage = new KeyedMessage[String, String](topic, message)
-    println(System.currentTimeMillis())
     producer.send(keyedMessage)
-    println(System.currentTimeMillis())
   }
 
   def close(): Unit = producer.close()

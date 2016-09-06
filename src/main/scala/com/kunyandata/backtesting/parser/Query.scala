@@ -37,6 +37,7 @@ object Query {
         case "2:" => typeTwo(query.replaceAll("2:", ""))
         case "3:" => typeThree(query.replaceAll("3:", ""))
         case "4:" => typeFour(query.replaceAll("4:", ""))
+//        case "5:" => typeFour(query.replaceAll("5:", ""))
         case _ => (-1, s"查询条件错误：$query")
       }
     } else {

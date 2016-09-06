@@ -243,7 +243,7 @@ object Rules {
       val value = regex.findAllIn(query).toArray
 
       if (value.length == 2 && value(0) < value(1)) {
-        
+
 
         (keyNum, value.mkString(","))
       } else if (value.length == 1 && query.contains("大于")) {

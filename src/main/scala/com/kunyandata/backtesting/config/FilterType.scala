@@ -18,7 +18,7 @@ object FilterType extends Enumeration {
   val FloatStockNum = Value(108, "float_stock_num|single_value") // 户均持股数
 
   // todo 这边需要新增一个filterType，机构持股数，id为109
-  val FloatStockNum = Value(109, "float_stock_num|single_value") // 机构持股数
+//  val FloatStockNum = Value(109, "float_stock_num|single_value") // 机构持股数
 
   val AbsoluteChangePercent = Value(201, "absolute_change_percent_|all_days_value") // 涨跌幅（绝对值）
   val IncChangePercent = Value(202, "inc_change_percent_|all_days_value") // 涨幅

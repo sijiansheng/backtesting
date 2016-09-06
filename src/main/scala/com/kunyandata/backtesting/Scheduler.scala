@@ -4,8 +4,7 @@ import java.util.NoSuchElementException
 import java.util.concurrent.{ExecutorService, Executors}
 
 import com.kunyandata.backtesting.config.{FilterType, Configuration}
-import com.kunyandata.backtesting.filter.Filter
-import com.kunyandata.backtesting.filter.common._
+import com.kunyandata.backtesting.filter._
 import com.kunyandata.backtesting.io.{RedisHandler, KafkaProducerHandler, KafkaConsumerHandler}
 import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.parser.Query
@@ -60,7 +59,6 @@ object Scheduler {
         val queryMap = Query.parse(condition)
 
         System.out.println(queryMap)
-        println(System.currentTimeMillis())
         val result = filter(queryMap, startDate, endDate)
 
         val resultValue = Json.obj(
@@ -114,7 +112,7 @@ object Scheduler {
 
       }
 
-      println(FilterType.apply(key).toString)
+      println("Value: " + FilterType.apply(key).toString)
 
       filterType match {
         case "all_days_value" =>
@@ -127,6 +125,8 @@ object Scheduler {
           filters += SingleValueFilter(prefix, values(0).toInt, values(1).toInt)
         case "sum_value" =>
           filters += SumValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+        case "direct" =>
+          filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
         case _ =>
           println("unknown")
       }

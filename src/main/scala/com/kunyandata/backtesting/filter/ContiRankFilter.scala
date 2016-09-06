@@ -1,20 +1,18 @@
-package com.kunyandata.backtesting.filter.common
+package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.{Callable, FutureTask}
 
-import com.kunyandata.backtesting.filter.Filter
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil
 
 import scala.collection.mutable
 
 /**
-  * 过滤出redis中的zset中
-  * 在某段时间范围内连续 N 天 score 值超过 M 的股票代码
+  * 连续N天排名超过M
   * Created by YangShuai
   * Created on 2016/8/24.
   */
-class ContiValueFilter private(prefix: String, days: Int, min: Int, max: Int, start: Int, end: Int) extends Filter {
+class ContiRankFilter private(prefix: String, days: Int, rank: Int, start: Int, end: Int) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -25,7 +23,7 @@ class ContiValueFilter private(prefix: String, days: Int, min: Int, max: Int, st
 
       val key = prefix + CommonUtil.getDateStr(i)
       val jedis = RedisHandler.getInstance().getJedis
-      val result = jedis.zrangeByScore(key, min, max)
+      val result = jedis.zrevrange(key, 0, -1).toArray().take(rank)
 
       map.foreach( x => {
 
@@ -36,17 +34,16 @@ class ContiValueFilter private(prefix: String, days: Int, min: Int, max: Int, st
 
       })
 
-      val iterator = result.iterator()
 
-      while (iterator.hasNext) {
+      result.foreach(x => {
 
-        val code = iterator.next()
+        val code = x.toString
         map.put(code, map.getOrElse(code, 0) + 1)
 
         if (map.getOrElse(code, 0) >= days)
           resultSet.add(code)
 
-      }
+      })
 
     }
 
@@ -55,11 +52,11 @@ class ContiValueFilter private(prefix: String, days: Int, min: Int, max: Int, st
 
 }
 
-object ContiValueFilter {
+object ContiRankFilter {
 
-  def apply(prefix: String, days: Int, min: Int, max: Int, start: Int, end: Int): ContiValueFilter = {
+  def apply(prefix: String, days: Int, rank: Int, start: Int, end: Int): ContiRankFilter = {
 
-    val filter = new ContiValueFilter(prefix, days, min, max, start, end)
+    val filter = new ContiRankFilter(prefix, days, rank, start, end)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

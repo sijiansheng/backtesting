@@ -16,6 +16,10 @@ object FilterType extends Enumeration {
   val TopStockRatio = Value(106, "top_stock_ratio|single_value")// 十大股东持股比例
   val HolderCount= Value(107, "holder_count|single_value") // 股东户数
   val FloatStockNum = Value(108, "float_stock_num|single_value") // 户均持股数
+
+  // todo 这边需要新增一个filterType，机构持股数，id为109
+  val FloatStockNum = Value(109, "float_stock_num|single_value") // 机构持股数
+
   val AbsoluteChangePercent = Value(201, "absolute_change_percent_|all_days_value") // 涨跌幅（绝对值）
   val IncChangePercent = Value(202, "inc_change_percent_|all_days_value") // 涨幅
   val DecChangePercent = Value(203, "dec_change_percent_|all_days_value") // 跌幅
@@ -47,9 +51,9 @@ object FilterType extends Enumeration {
   val VipStockDown = Value(15002, "vipstockstatistic_down_|conti_value") // 大V看空
 
   //行为数据
-  val HeatValueDiff = Value(150003, "diff_heat_|conti_value") //查看热度连续X天上涨超过X
-  val HeatRank = Value(150004, "count_heat_|conti_rank") //查看热度连续X天出现在topX
-  val HeatValue = Value(150005, "count_heat_|conti_value") //查看热度连续X天超过X
+  val HeatValueDiff = Value(15003, "diff_heat_|conti_value") //查看热度连续X天上涨超过X
+  val HeatRank = Value(15004, "count_heat_|conti_rank") //查看热度连续X天出现在topX
+  val HeatValue = Value(15005, "count_heat_|conti_value") //查看热度连续X天超过X
 
   val ChangeInHolding = Value(40001,"change_in_holding|single_value") // 增减持
   val InstitutionStockNum = Value(40002,"institution_stock_num|single_value") // 机构持股

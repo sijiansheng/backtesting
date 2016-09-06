@@ -1,9 +1,9 @@
-package com.kunyandata.backtesting.filter.common
+package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.{Callable, FutureTask}
 
-import com.kunyandata.backtesting.filter.Filter
 import com.kunyandata.backtesting.io.RedisHandler
+
 import scala.collection.JavaConversions._
 
 /**

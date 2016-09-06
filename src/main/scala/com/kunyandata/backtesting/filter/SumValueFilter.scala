@@ -1,24 +1,21 @@
-package com.kunyandata.backtesting.filter.common
+package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.{Callable, FutureTask}
 
-import com.kunyandata.backtesting.filter.Filter
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil
 
 import scala.collection.mutable
 
 /**
-  * 过滤出redis中的zset中
-  * 在某段时间范围内连续 N 天 score 值超过 M 的股票代码
+  * 对给定日期范围内值得总和的过滤
   * Created by YangShuai
-  * Created on 2016/8/24.
+  * Created on 2016/9/2.
   */
-class ContiValueFilter private(prefix: String, days: Int, min: Double, max: Double, start: Int, end: Int) extends Filter {
+class SumValueFilter private(prefix: String, min: Double, max: Double, start: Int, end: Int) extends Filter {
 
   override def filter(): List[String] = {
 
-    val resultSet = mutable.Set[String]()
     val map = mutable.Map[String, Int]()
 
     for (i <- start to end) {
@@ -27,39 +24,25 @@ class ContiValueFilter private(prefix: String, days: Int, min: Double, max: Doub
       val jedis = RedisHandler.getInstance().getJedis
       val result = jedis.zrangeByScore(key, min, max)
 
-      map.foreach( x => {
-
-        val key = x._1
-
-        if (!result.contains(key))
-          map.remove(key)
-
-      })
-
       val iterator = result.iterator()
 
       while (iterator.hasNext) {
-
         val code = iterator.next()
         map.put(code, map.getOrElse(code, 0) + 1)
-
-        if (map.getOrElse(code, 0) >= days)
-          resultSet.add(code)
-
       }
 
     }
 
-    resultSet.toList
+    map.filter((x) => x._2 >= min && x._2 <= max).keys.toList
   }
 
 }
 
-object ContiValueFilter {
+object SumValueFilter {
 
-  def apply(prefix: String, days: Int, min: Double, max: Double, start: Int, end: Int): ContiValueFilter = {
+  def apply(prefix: String, min: Double, max: Double, start: Int, end: Int): SumValueFilter = {
 
-    val filter = new ContiValueFilter(prefix, days, min, max, start, end)
+    val filter = new SumValueFilter(prefix, min, max, start, end)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

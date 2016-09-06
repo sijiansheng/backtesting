@@ -1,5 +1,6 @@
 package com.kunyandata.backtesting
 
+import java.util.NoSuchElementException
 import java.util.concurrent.{ExecutorService, Executors}
 
 import com.kunyandata.backtesting.config.{FilterType, Configuration}
@@ -92,11 +93,26 @@ object Scheduler {
 
     queryMap.foreach(pair => {
 
+      var prefix = ""
+      var filterType = ""
+
       val key = pair._1
       val values = pair._2.split(",")
-      val infos = FilterType.apply(key).toString.split("\\|")
-      val prefix = infos(0)
-      val filterType = infos(1)
+
+      try {
+
+        val infos = FilterType.apply(key).toString.split("\\|")
+        prefix = infos(0)
+        filterType = infos(1)
+
+      } catch {
+
+        case e: NoSuchElementException =>
+        case e: IndexOutOfBoundsException =>
+          e.printStackTrace()
+          println(FilterType.apply(key).toString)
+
+      }
 
       println(FilterType.apply(key).toString)
 

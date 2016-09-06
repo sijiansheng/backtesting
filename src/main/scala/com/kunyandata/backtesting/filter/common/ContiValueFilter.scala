@@ -14,7 +14,7 @@ import scala.collection.mutable
   * Created by YangShuai
   * Created on 2016/8/24.
   */
-class ContiValueFilter private(prefix: String, days: Int, min: Int, max: Int, start: Int, end: Int) extends Filter {
+class ContiValueFilter private(prefix: String, days: Int, min: Double, max: Double, start: Int, end: Int) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -57,7 +57,7 @@ class ContiValueFilter private(prefix: String, days: Int, min: Int, max: Int, st
 
 object ContiValueFilter {
 
-  def apply(prefix: String, days: Int, min: Int, max: Int, start: Int, end: Int): ContiValueFilter = {
+  def apply(prefix: String, days: Int, min: Double, max: Double, start: Int, end: Int): ContiValueFilter = {
 
     val filter = new ContiValueFilter(prefix, days, min, max, start, end)
 

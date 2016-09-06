@@ -118,15 +118,15 @@ object Scheduler {
 
       filterType match {
         case "all_days_value" =>
-          filters += AllDayValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          filters += AllDayValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
         case "conti_value" =>
-          filters += ContiValueFilter(prefix, values(0).toInt, values(1).toInt, values(2).toInt, startOffset, endOffset)
+          filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
         case "conti_rank" =>
           filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
         case "single_value" =>
-          filters += SingleValueFilter(prefix, values(0).toInt, values(1).toInt)
+          filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
         case "sum_value" =>
-          filters += SumValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          filters += SumValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
         case _ =>
           println("unknown")
       }

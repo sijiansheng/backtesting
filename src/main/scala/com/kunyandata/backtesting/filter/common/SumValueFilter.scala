@@ -13,7 +13,7 @@ import scala.collection.mutable
   * Created by YangShuai
   * Created on 2016/9/2.
   */
-class SumValueFilter private(prefix: String, min: Int, max: Int, start: Int, end: Int) extends Filter {
+class SumValueFilter private(prefix: String, min: Double, max: Double, start: Int, end: Int) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -41,7 +41,7 @@ class SumValueFilter private(prefix: String, min: Int, max: Int, start: Int, end
 
 object SumValueFilter {
 
-  def apply(prefix: String, min: Int, max: Int, start: Int, end: Int): SumValueFilter = {
+  def apply(prefix: String, min: Double, max: Double, start: Int, end: Int): SumValueFilter = {
 
     val filter = new SumValueFilter(prefix, min, max, start, end)
 

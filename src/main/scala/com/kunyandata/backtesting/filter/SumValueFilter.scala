@@ -17,11 +17,11 @@ class SumValueFilter private(prefix: String, min: Int, max: Int, start: Int, end
   override def filter(): List[String] = {
 
     val map = mutable.Map[String, Int]()
+    val jedis = RedisHandler.getInstance().getJedis
 
     for (i <- start to end) {
 
       val key = prefix + CommonUtil.getDateStr(i)
-      val jedis = RedisHandler.getInstance().getJedis
       val result = jedis.zrangeByScore(key, min, max)
 
       val iterator = result.iterator()
@@ -32,6 +32,8 @@ class SumValueFilter private(prefix: String, min: Int, max: Int, start: Int, end
       }
 
     }
+
+    jedis.close()
 
     map.filter((x) => x._2 >= min && x._2 <= max).keys.toList
   }

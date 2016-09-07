@@ -61,6 +61,8 @@ object Scheduler {
         System.out.println(queryMap)
         val result = filter(queryMap, startDate, endDate)
 
+        println("[RESULT]" + result._1)
+
         val resultValue = Json.obj(
           "uid" -> uid,
           "session" -> session,
@@ -95,40 +97,44 @@ object Scheduler {
       var filterType = ""
 
       val key = pair._1
-      val values = pair._2.split(",")
+      if (key > 0) {
 
-      try {
+        val values = pair._2.split(",")
 
-        val infos = FilterType.apply(key).toString.split("\\|")
-        prefix = infos(0)
-        filterType = infos(1)
+        try {
 
-      } catch {
+          val infos = FilterType.apply(key).toString.split("\\|")
+          prefix = infos(0)
+          filterType = infos(1)
 
-        case e: NoSuchElementException =>
-        case e: IndexOutOfBoundsException =>
-          e.printStackTrace()
-          println(FilterType.apply(key).toString)
+        } catch {
 
-      }
+          case e: NoSuchElementException =>
+          case e: IndexOutOfBoundsException =>
+            e.printStackTrace()
+            println(FilterType.apply(key).toString)
 
-      println("Value: " + FilterType.apply(key).toString)
+        }
 
-      filterType match {
-        case "all_days_value" =>
-          filters += AllDayValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-        case "conti_value" =>
-          filters += ContiValueFilter(prefix, values(0).toInt, values(1).toInt, values(2).toInt, startOffset, endOffset)
-        case "conti_rank" =>
-          filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-        case "single_value" =>
-          filters += SingleValueFilter(prefix, values(0).toInt, values(1).toInt)
-        case "sum_value" =>
-          filters += SumValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-        case "direct" =>
-          filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
-        case _ =>
-          println("unknown")
+        println("Value: " + FilterType.apply(key).toString)
+
+        filterType match {
+          case "all_days_value" =>
+            filters += AllDayValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          case "conti_value" =>
+            filters += ContiValueFilter(prefix, values(0).toInt, values(1).toInt, values(2).toInt, startOffset, endOffset)
+          case "conti_rank" =>
+            filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          case "single_value" =>
+            filters += SingleValueFilter(prefix, values(0).toInt, values(1).toInt)
+          case "sum_value" =>
+            filters += SumValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          case "direct" =>
+            filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
+          case _ =>
+            println("unknown")
+        }
+
       }
 
     })

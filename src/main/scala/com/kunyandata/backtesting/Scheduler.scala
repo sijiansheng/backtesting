@@ -61,8 +61,6 @@ object Scheduler {
         System.out.println(queryMap)
         val result = filter(queryMap, startDate, endDate)
 
-        println("[RESULT]" + result._1)
-
         val resultValue = Json.obj(
           "uid" -> uid,
           "session" -> session,
@@ -118,22 +116,22 @@ object Scheduler {
 
         println("Value: " + FilterType.apply(key).toString)
 
-        filterType match {
-          case "all_days_value" =>
-            filters += AllDayValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-          case "conti_value" =>
-            filters += ContiValueFilter(prefix, values(0).toInt, values(1).toInt, values(2).toInt, startOffset, endOffset)
-          case "conti_rank" =>
-            filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-          case "single_value" =>
-            filters += SingleValueFilter(prefix, values(0).toInt, values(1).toInt)
-          case "sum_value" =>
-            filters += SumValueFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-          case "direct" =>
-            filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
-          case _ =>
-            println("unknown")
-        }
+      filterType match {
+        case "all_days_value" =>
+          filters += AllDayValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
+        case "conti_value" =>
+          filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
+        case "conti_rank" =>
+          filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+        case "single_value" =>
+          filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
+        case "sum_value" =>
+          filters += SumValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
+        case "direct" =>
+          filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
+        case _ =>
+          println("unknown")
+      }
 
       }
 

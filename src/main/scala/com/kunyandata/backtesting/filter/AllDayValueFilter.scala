@@ -12,7 +12,7 @@ import scala.collection.mutable
   * Created by YangShuai
   * Created on 2016/9/1.
   */
-class AllDayValueFilter private(prefix: String, min: Int, max: Int, start: Int, end: Int) extends Filter {
+class AllDayValueFilter private(prefix: String, min: Double, max: Double, start: Int, end: Int) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -71,7 +71,7 @@ class AllDayValueFilter private(prefix: String, min: Int, max: Int, start: Int, 
 
 object AllDayValueFilter {
 
-  def apply(prefix: String, min: Int, max: Int, start: Int, end: Int): AllDayValueFilter = {
+  def apply(prefix: String, min: Double, max: Double, start: Int, end: Int): AllDayValueFilter = {
 
     val filter = new AllDayValueFilter(prefix, min, max, start, end)
 

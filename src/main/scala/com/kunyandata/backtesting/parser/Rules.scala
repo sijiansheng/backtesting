@@ -240,27 +240,53 @@ object Rules {
 
       // 如果keyNum小于1000，说明该条件为大于小于类型的查询条件
       // 生成获取数字的正则
-      val regex =
-        """\d+""".r
+      val regex = """\d+""".r
+      val percent = query.contains("%")
       val value = regex.findAllIn(query).toArray
 
-      if (value.length == 2 && value(0) < value(1)) {
+      if (value.length == 2 && value(0).toLong < value(1).toLong) {
 
-        (keyNum, value.mkString(","))
+        if (percent) {
+
+          (keyNum, value.map(x => x.toDouble / 100).mkString(","))
+        } else {
+
+          (keyNum, value.mkString(","))
+        }
       } else if (value.length == 1 && query.contains("大于")) {
 
-        (keyNum, s"${value(0)},${Int.MaxValue}")
+        val max = Int.MaxValue
+        if (percent) {
+
+          val min = value.map(x => x.toDouble / 100).apply(0)
+          (keyNum, s"$min,$max")
+        } else {
+
+          (keyNum, s"${value(0)},${Int.MaxValue}")
+        }
       } else if (value.length == 1 && query.contains("小于")) {
 
-        (keyNum, s"${Int.MinValue},${value(0)}")
+        val min = Int.MinValue
+        if (percent) {
+
+          val max = value.map(x => x.toDouble / 100).apply(0)
+          (keyNum, s"$min,$max")
+        } else {
+
+          val max = value(0)
+          (keyNum, s"$min,$max")
+        }
       } else if (value.length == 1 && query.contains("等于")) {
 
-        (keyNum, s"${value(0)},${value(0)}")
+        val min = value(0)
+        val max = value(0)
+        (keyNum, s"$min,$max")
       } else {
 
         (-1, s"查询条件错误：$query")
       }
-    } else {
+    }
+    else {
 
       (0, "")
     }

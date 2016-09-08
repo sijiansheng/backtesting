@@ -289,12 +289,10 @@ object Rules {
       case _ => (-1, s"查询条件错误“$query”：条件不存在或存在非法字符")
     }
 
-    if (resultTemp._2.startsWith("error:")){
+    resultTemp._2.startsWith("error:") match {
 
-      (-1, s"查询条件错误“$query”：${resultTemp._2.replace("error:", "")}")
-    } else {
-
-      resultTemp
+      case true => (-1, s"查询条件错误“$query”：${resultTemp._2.replace("error:", "")}")
+      case _ => resultTemp
     }
   }
 }

@@ -1,4 +1,4 @@
-package com.kunyandata.backtesting.parser
+package scala.com.kunyandata.backtesting.parser
 
 /**
   * Created by QQ on 2016/8/30.
@@ -11,18 +11,17 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  def parse(query: String): Map[Int, String] = {
+  def parser(query: String): Map[Int, String] = {
 
     val queries = query.split("\\+")
 
-    val result = queries.map(query => {
+    val resultTemp = queries.map(query => {
 
-      parseByType(query)
+      parserByType(query)
     }).groupBy(_._1).map(x => (x._1, x._2.map(_._2).mkString(",")))
 
-    result
+    resultTemp
   }
-
 
   /**
     * 将查询条件划分为不同的查询类别，分别进行处理
@@ -30,120 +29,16 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  private def parseByType(query: String) = {
+  private def parserByType(query: String) = {
 
-    if (query.length >= 2) {
-      query.substring(0, 2) match {
+    query.substring(0, 2) match {
 
-        case "1:" => typeOne(query.replaceAll("1:", ""))
-        case "2:" => typeTwo(query.replaceAll("2:", ""))
-        case "3:" => typeThree(query.replaceAll("3:", ""))
-        case "4:" => typeFour(query.replaceAll("4:", ""))
-        case "5:" => typeFive(query.replaceAll("5:", ""))
-        case _ => (-1, s"查询条件错误：$query")
-      }
-    } else {
-
-      (-1, s"查询条件错误：$query")
+      case "1:" => Rules.parse(query.replaceAll("1:", ""))
+      case "2:" => Rules.parse(query.replaceAll("2:", ""))
+      case "3:" => Rules.parse(query.replaceAll("3:", ""))
+      case "4:" => Rules.parse(query.replaceAll("4:", ""))
+      case "5:" => (40003, query.replaceAll("5:", ""))
+      case _ => (-1, s"查询条件错误“$query”：条件不存在")
     }
-
-
-  }
-
-  /**
-    * 基本面查询条件
-    *
-    * @param query 查询文本
-    * @return
-    */
-  private def typeOne(query: String): (Int, String) = {
-
-    val biggerAndSmallerTemp = Rules.biggerAndSmaller(query, 1)
-
-    if (biggerAndSmallerTemp._1 != 0) {
-
-      return biggerAndSmallerTemp
-    }
-
-    val isOrNotTemp = Rules.isOrNot(query, 1)
-
-    if (isOrNotTemp._1 != 0) {
-
-      return isOrNotTemp
-    }
-
-    (-1, s"查询条件错误：$query")
-  }
-
-  /**
-    * 技术面查询条件解析
-    *
-    * @param query 查询文本
-    * @return
-    */
-  private def typeTwo(query: String): (Int, String) = {
-
-    val biggerAndSmallerTemp = Rules.biggerAndSmaller(query, 2)
-
-    if (biggerAndSmallerTemp._1 != 0) {
-
-      return biggerAndSmallerTemp
-    }
-
-    (-1, s"查询条件错误：$query")
-  }
-
-  /**
-    * 资金面查询条件解析
-    *
-    * @param query 查询文本
-    * @return
-    */
-  private def typeThree(query: String): (Int, String) = {
-
-    val biggerAndSmallerTemp = Rules.biggerAndSmaller(query, 3)
-
-    if (biggerAndSmallerTemp._1 != 0) {
-
-      return biggerAndSmallerTemp
-    }
-
-    (-1, s"查询条件错误：$query")
-  }
-
-  /**
-    * 消息面查询条件解析
-    *
-    * @param query 查询文本
-    * @return
-    */
-  private def typeFour(query: String): (Int, String) = {
-
-    val biggerAndSmallerTemp = Rules.biggerAndSmaller(query, 4)
-
-    if (biggerAndSmallerTemp._1 != 0) {
-
-      return biggerAndSmallerTemp
-    }
-
-    val continuousTemp = Rules.continuous(query, 4)
-
-    if (continuousTemp._1 != 0) {
-
-      return continuousTemp
-    }
-
-    (-1, s"查询条件错误：$query")
-  }
-
-  private def typeFive(query: String): (Int, String) = {
-
-    val isOrNotTemp = Rules.isOrNot(query, 5)
-    if (isOrNotTemp._1 != 0) {
-
-      return isOrNotTemp
-    }
-
-    (-1, s"查询条件错误：$query")
   }
 }

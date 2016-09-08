@@ -38,7 +38,7 @@ object Query {
       case "3:" => Rules.template(query.replaceAll("3:", ""))
       case "4:" => Rules.template(query.replaceAll("4:", ""))
       case "5:" => (40003, query.replaceAll("5:", ""))
-      case _ => (-1, s"查询条件错误“$query”：条件不存在")
+      case _ => (-1, s"查询条件错误“$query”：条件不存在或存在非法字符")
     }
   }
 }

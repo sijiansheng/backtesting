@@ -24,12 +24,10 @@ object Rules {
     */
   def bigger(number: String): String = {
 
-    if (number.contains("%")) {
+    number.contains("%") match {
 
-      s"${number.replaceAll("%", "").toDouble / 100},${Int.MaxValue}"
-    } else {
-
-      s"$number,${Int.MaxValue}"
+      case true => s"${number.replaceAll("%", "").toDouble / 100},${Int.MaxValue}"
+      case _ => s"$number,${Int.MaxValue}"
     }
   }
   /**
@@ -39,14 +37,11 @@ object Rules {
     */
   def smaller(number: String): String = {
 
-    if (number.contains("%")) {
+    number.contains("%") match {
 
-      s"${Int.MinValue},${number.replaceAll("%", "").toDouble / 100}"
-    } else {
-
-      s"${Int.MinValue},$number"
+      case true => s"${Int.MinValue},${number.replaceAll("%", "").toDouble / 100}"
+      case _ => s"${Int.MinValue},$number"
     }
-
   }
   /**
     * 等于类型数据转化为区间表示
@@ -55,12 +50,11 @@ object Rules {
     */
   def equel(number: String): String = {
 
-    if (number.contains("%")) {
+    number.contains("%") match {
 
-      s"${number.replaceAll("%", "").toDouble / 100},${number.replaceAll("%", "").toDouble / 100}"
-    } else {
-
-      s"$number,$number"
+      case true => s"${number.replaceAll("%", "").toDouble / 100}" +
+        s",${number.replaceAll("%", "").toDouble / 100}"
+      case _ => s"$number,$number"
     }
   }
 
@@ -71,25 +65,26 @@ object Rules {
     */
   def biggerAndSmaller(number:Array[String]): String = {
 
-    if (number.contains("%")) {
+    number.length match {
 
-      val one = number.apply(0).replaceAll("%", "").toDouble / 100
-      val two = number.apply(1).replaceAll("%", "").toDouble / 100
+      case 2 =>
 
-      one < two match {
-        case true => s"$one,$two"
-        case _ => "数值大小关系错误"
-      }
+        val nums = number.map(num => {
 
-    } else {
+          num.contains("%") match {
 
-      val one = number.apply(0)
-      val two = number.apply(1)
+            case true => num.replaceAll("%", "").toDouble / 100
+            case _ => num.toDouble
+          }
+        })
 
-      one < two match {
-        case true => s"$one,$two"
-        case _ => "数值大小关系错误"
-      }
+        nums(0) <= nums(1) match {
+
+          case true => s"${nums(0)},${nums(1)}"
+          case _ => "error:数值大小关系错误"
+        }
+
+      case _ =>  "error:条件数值个数错误"
     }
   }
 
@@ -252,9 +247,9 @@ object Rules {
       case "新闻转载热度每年大于x次小于x次" => (8402, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       //公告性事件
-      case "盈利预增x%" => (50001, queryNumbers(0))
-      case "诉讼仲裁x次" => (50002, queryNumbers(0))
-      case "违规处罚x次" => (50003, queryNumbers(0))
+      case "盈利预增x%" => (50001, equel(queryNumbers(0)))
+      case "诉讼仲裁x次" => (50002, equel(queryNumbers(0)))
+      case "违规处罚x次" => (50003, equel(queryNumbers(0)))
       case "盈利预增x%以上" => (50001, bigger(queryNumbers(0)))
       case "诉讼仲裁x次以上" => (50002, bigger(queryNumbers(0)))
       case "违规处罚x次以上" => (50003, bigger(queryNumbers(0)))
@@ -291,15 +286,13 @@ object Rules {
       case "查看热度连续x天超过x" => (15005, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
       case "查看热度连续x天以上超过x" => (15005, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
 
-      case _ => (-1, s"查询条件错误“$query”：条件不存在")
+      case _ => (-1, s"查询条件错误“$query”：条件不存在或存在非法字符")
     }
 
-    if (resultTemp._2 == "数值大小关系错误") {
+    resultTemp._2.startsWith("error:") match {
 
-      (-1, s"查询条件错误“$query”：数值大小关系错误")
-    } else {
-
-      resultTemp
+      case true => (-1, s"查询条件错误“$query”：${resultTemp._2.replace("error:", "")}")
+      case _ => resultTemp
     }
   }
 }

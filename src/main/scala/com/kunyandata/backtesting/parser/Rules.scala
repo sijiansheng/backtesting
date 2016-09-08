@@ -1,5 +1,4 @@
-package scala.com.kunyandata.backtesting.parser
-
+package com.kunyandata.backtesting.parser
 
 /**
   * Created by QQ on 2016/8/30.

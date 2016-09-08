@@ -100,7 +100,7 @@ object Rules {
 
     queryNumbers.foreach(num => {
 
-      queryTemplate = queryTemplate.replace(num.replace("%", ""), "x")
+      queryTemplate = queryTemplate.replaceFirst(num.replace("%", ""), "x")
     })
 
     val resultTemp = queryTemplate match {
@@ -198,7 +198,7 @@ object Rules {
       case "收益率大于x%" => (209, bigger(queryNumbers(0)))
       case "收益率小于x%" => (209, smaller(queryNumbers(0)))
       case "收益率等于x%" => (209, equel(queryNumbers(0)))
-      case "收益率大于x小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
+      case "收益率大于x%小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       case "资金流入大于x万" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x万" => (301, smaller(queryNumbers(0)))

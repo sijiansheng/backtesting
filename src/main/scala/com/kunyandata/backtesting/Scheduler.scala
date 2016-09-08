@@ -95,24 +95,26 @@ object Scheduler {
       var filterType = ""
 
       val key = pair._1
-      val values = pair._2.split(",")
+      if (key > 0) {
 
-      try {
+        val values = pair._2.split(",")
 
-        val infos = FilterType.apply(key).toString.split("\\|")
-        prefix = infos(0)
-        filterType = infos(1)
+        try {
 
-      } catch {
+          val infos = FilterType.apply(key).toString.split("\\|")
+          prefix = infos(0)
+          filterType = infos(1)
 
-        case e: NoSuchElementException =>
-        case e: IndexOutOfBoundsException =>
-          e.printStackTrace()
-          println(FilterType.apply(key).toString)
+        } catch {
 
-      }
+          case e: NoSuchElementException =>
+          case e: IndexOutOfBoundsException =>
+            e.printStackTrace()
+            println(FilterType.apply(key).toString)
 
-      println("Value: " + FilterType.apply(key).toString)
+        }
+
+        println("Value: " + FilterType.apply(key).toString)
 
       filterType match {
         case "all_days_value" =>
@@ -129,6 +131,8 @@ object Scheduler {
           filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
         case _ =>
           println("unknown")
+      }
+
       }
 
     })

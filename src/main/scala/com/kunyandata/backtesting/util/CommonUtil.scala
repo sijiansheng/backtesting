@@ -17,7 +17,7 @@ object CommonUtil {
     * @return
     */
   def getDateStr(offset: Int): String = {
-    val timeStamp = System.currentTimeMillis() + offset * 24 * 60 * 60 * 1000
+    val timeStamp = System.currentTimeMillis() + offset * 24l * 60 * 60 * 1000
     new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
   }
 
@@ -30,7 +30,7 @@ object CommonUtil {
     */
   def getOffset(dateString: String): Int = {
     val timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(dateString).getTime
-    ((timeStamp - System.currentTimeMillis()) / (24 * 60 * 60 * 1000)).toInt
+    ((timeStamp - System.currentTimeMillis()) / (24l * 60 * 60 * 1000)).toInt
   }
 
 }

@@ -11,13 +11,13 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  def parser(query: String): Map[Int, String] = {
+  def parse(query: String): Map[Int, String] = {
 
     val queries = query.split("\\+")
 
     val resultTemp = queries.map(query => {
 
-      parserByType(query)
+      parseByType(query)
     }).groupBy(_._1).map(x => (x._1, x._2.map(_._2).mkString(",")))
 
     resultTemp
@@ -29,14 +29,14 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  private def parserByType(query: String) = {
+  private def parseByType(query: String) = {
 
     query.substring(0, 2) match {
 
-      case "1:" => Rules.parse(query.replaceAll("1:", ""))
-      case "2:" => Rules.parse(query.replaceAll("2:", ""))
-      case "3:" => Rules.parse(query.replaceAll("3:", ""))
-      case "4:" => Rules.parse(query.replaceAll("4:", ""))
+      case "1:" => Rules.template(query.replaceAll("1:", ""))
+      case "2:" => Rules.template(query.replaceAll("2:", ""))
+      case "3:" => Rules.template(query.replaceAll("3:", ""))
+      case "4:" => Rules.template(query.replaceAll("4:", ""))
       case "5:" => (40003, query.replaceAll("5:", ""))
       case _ => (-1, s"查询条件错误“$query”：条件不存在")
     }

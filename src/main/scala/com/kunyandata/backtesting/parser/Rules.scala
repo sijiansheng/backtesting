@@ -98,7 +98,7 @@ object Rules {
     * @param query 条件语句
     * @return
     */
-  def parse(query: String): (Int, String) = {
+  def template(query: String): (Int, String) = {
 
     val queryNumbers = getNumbers(query)
     var queryTemplate: String = query

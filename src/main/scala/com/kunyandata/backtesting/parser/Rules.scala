@@ -71,12 +71,10 @@ object Rules {
 
         val nums = number.map(num => {
 
-          if (num.contains("%")) {
+          num.contains("%") match {
 
-            num.replaceAll("%", "").toDouble / 100
-          } else {
-
-            num.toDouble
+            case true => num.replaceAll("%", "").toDouble / 100
+            case _ => num.toDouble
           }
         })
 
@@ -86,7 +84,7 @@ object Rules {
           case _ => "error:数值大小关系错误"
         }
 
-      case _ =>  "error:数值个数错误"
+      case _ =>  "error:条件数值个数错误"
     }
   }
 

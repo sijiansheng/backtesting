@@ -19,11 +19,11 @@ class ContiValueFilter private(prefix: String, days: Int, min: Double, max: Doub
 
     val resultSet = mutable.Set[String]()
     val map = mutable.Map[String, Int]()
+    val jedis = RedisHandler.getInstance().getJedis
 
     for (i <- start to end) {
 
       val key = prefix + CommonUtil.getDateStr(i)
-      val jedis = RedisHandler.getInstance().getJedis
       val result = jedis.zrangeByScore(key, min, max)
 
       map.foreach( x => {
@@ -48,6 +48,8 @@ class ContiValueFilter private(prefix: String, days: Int, min: Double, max: Doub
       }
 
     }
+
+    jedis.close()
 
     resultSet.toList
   }

@@ -19,11 +19,11 @@ class AllDayValueFilter private(prefix: String, min: Double, max: Double, start:
     val resultSet = mutable.Set[String]()
     var init = false
     var count = 0
+    val jedis = RedisHandler.getInstance().getJedis
 
     for (i <- start to end) {
 
       val key = prefix + CommonUtil.getDateStr(i)
-      val jedis = RedisHandler.getInstance().getJedis
 
       if (jedis.exists(key)) {
 
@@ -62,6 +62,8 @@ class AllDayValueFilter private(prefix: String, min: Double, max: Double, start:
       }
 
     }
+
+    jedis.close()
 
     resultSet.toList
   }

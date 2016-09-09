@@ -12,7 +12,7 @@ object Rules {
     */
   def getNumbers(query: String): Array[String] = {
 
-    val temp = query.replaceAll("[\\u4e00-\\u9fa5]", " ").replaceAll("[a-zA-Z]", " ").trim.split(" ")
+    val temp = query.replaceAll("[\\u4e00-\\u9fa5]", " ").replaceAll("[a-zA-Z~]", " ").trim.split(" ")
 
     temp.filter(_.length > 0)
   }

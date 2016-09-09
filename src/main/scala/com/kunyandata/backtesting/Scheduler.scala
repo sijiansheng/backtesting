@@ -61,13 +61,20 @@ object Scheduler {
         System.out.println(queryMap)
         val result = filter(queryMap, startDate, endDate)
 
+        var rightOption = condition
+
+        result._2.split(",").foreach(x => {
+          rightOption = rightOption.replaceFirst(x, "")
+        })
+
         val resultValue = Json.obj(
           "uid" -> uid,
           "session" -> session,
           "start_time" -> startDate,
           "end_time" -> endDate,
           "stocks" -> result._1,
-          "wrong_condition" -> result._2
+          "wrong_condition" -> result._2,
+          "right_condition" -> rightOption
         )
 
         producerHandler.sendMessage(Json.stringify(resultValue))

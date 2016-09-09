@@ -247,10 +247,10 @@ object Rules {
       case "新闻转载热度每年大于x次小于x次" => (8402, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       //公告性事件
-      case "盈利预增x%" => (50001, equel(queryNumbers(0)))
+      case "盈利预增x次" => (50001, equel(queryNumbers(0)))
       case "诉讼仲裁x次" => (50002, equel(queryNumbers(0)))
       case "违规处罚x次" => (50003, equel(queryNumbers(0)))
-      case "盈利预增x%以上" => (50001, bigger(queryNumbers(0)))
+      case "盈利预增x次以上" => (50001, bigger(queryNumbers(0)))
       case "诉讼仲裁x次以上" => (50002, bigger(queryNumbers(0)))
       case "违规处罚x次以上" => (50003, bigger(queryNumbers(0)))
 

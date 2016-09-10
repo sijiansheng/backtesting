@@ -12,7 +12,7 @@ object Rules {
     */
   def getNumbers(query: String): Array[String] = {
 
-    val temp = query.replaceAll("[\\u4e00-\\u9fa5]", " ").replaceAll("[a-zA-Z]", " ").trim.split(" ")
+    val temp = query.replaceAll("[\\u4e00-\\u9fa5]", " ").replaceAll("[a-zA-Z~]", " ").trim.split(" ")
 
     temp.filter(_.length > 0)
   }
@@ -100,7 +100,7 @@ object Rules {
 
     queryNumbers.foreach(num => {
 
-      queryTemplate = queryTemplate.replace(num.replace("%", ""), "x")
+      queryTemplate = queryTemplate.replaceFirst(num.replace("%", ""), "x")
     })
 
     val resultTemp = queryTemplate match {
@@ -198,7 +198,7 @@ object Rules {
       case "收益率大于x%" => (209, bigger(queryNumbers(0)))
       case "收益率小于x%" => (209, smaller(queryNumbers(0)))
       case "收益率等于x%" => (209, equel(queryNumbers(0)))
-      case "收益率大于x小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
+      case "收益率大于x%小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       case "资金流入大于x万" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x万" => (301, smaller(queryNumbers(0)))
@@ -247,10 +247,10 @@ object Rules {
       case "新闻转载热度每年大于x次小于x次" => (8402, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       //公告性事件
-      case "盈利预增x%" => (50001, equel(queryNumbers(0)))
+      case "盈利预增x次" => (50001, equel(queryNumbers(0)))
       case "诉讼仲裁x次" => (50002, equel(queryNumbers(0)))
       case "违规处罚x次" => (50003, equel(queryNumbers(0)))
-      case "盈利预增x%以上" => (50001, bigger(queryNumbers(0)))
+      case "盈利预增x次以上" => (50001, bigger(queryNumbers(0)))
       case "诉讼仲裁x次以上" => (50002, bigger(queryNumbers(0)))
       case "违规处罚x次以上" => (50003, bigger(queryNumbers(0)))
 

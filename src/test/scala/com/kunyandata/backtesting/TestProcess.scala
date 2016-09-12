@@ -118,13 +118,6 @@ object TestProcess extends App {
   assert(stocks.size == 1696)
   assert(stocks.head == "000001")
 
-  //这个得出的结果不对，待核实
-  //    queryMap = Query.parse("2:成交额大于0万小于1万")
-  //    result = Scheduler.filter(queryMap, "2016-08-17", "2016-08-17")
-  //    stocks = result._1
-  //    println(stocks)
-  //    assert(stocks.head == "000002")
-
   queryMap = Query.parse("4:新闻访问热度每天大于77次小于80次")
   result = Scheduler.filter(queryMap, "2016-08-05", "2016-08-05")
   stocks = result._1

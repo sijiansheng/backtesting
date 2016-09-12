@@ -39,7 +39,7 @@ object TestProcess extends App {
 
   for (index <- conditionsGroupOne.indices) {
 
-    var queryMap = Query.parse(conditionsGroupOne(index))
+    val queryMap = Query.parse(conditionsGroupOne(index))
     val result = Scheduler.filter(queryMap, "2015-06-12", "2015-06-12")
     val stocks = result._1
     assert(stocks.size == 1)
@@ -66,7 +66,7 @@ object TestProcess extends App {
 
   for (index <- conditionGroupTwo.indices) {
 
-    var queryMap = Query.parse(conditionGroupTwo(index))
+    val queryMap = Query.parse(conditionGroupTwo(index))
     val result = Scheduler.filter(queryMap, "2015-06-12", "2015-06-12")
     val stocks = result._1
     assert(stocks.size == 1)

@@ -47,6 +47,8 @@ object TestProcess extends App {
 
   }
 
+
+
   val conditionGroupTwo = List(
     "2:涨跌幅大于0.08%小于0.09%",
     "2:跌幅大于0.06%小于0.07%",
@@ -91,6 +93,34 @@ object TestProcess extends App {
   stocks = result._1
   assert(stocks.size == 2)
   assert(stocks.toList == List("300466", "300110"))
+
+
+  queryMap = Query.parse("5:石墨烯")
+  result = Scheduler.filter(queryMap, "2016-08-25", "2016-08-25")
+  stocks = result._1
+  assert(stocks.size == 1)
+  assert(stocks.toList == List("601519"))
+
+  queryMap = Query.parse("1:机构持股数大于520000万小于530000万")
+  result = Scheduler.filter(queryMap, "2016-08-25", "2016-08-25")
+  stocks = result._1
+  assert(stocks.size == 1)
+  assert(stocks.toList == List("002792"))
+
+  queryMap = Query.parse("4:高管增股")
+  println(queryMap)
+  result = Scheduler.filter(queryMap, "2016-08-25", "2016-08-25")
+  stocks = result._1
+  println(stocks.size)
+  println(stocks)
+//  assert(stocks.toList == List("002792"))
+
+  queryMap = Query.parse("4:高管减股")
+  result = Scheduler.filter(queryMap, "2016-08-25", "2016-08-25")
+  stocks = result._1
+  println(stocks.size)
+  println(stocks)
+//  assert(stocks.toList == List("002792"))
 
   //这个得出的结果不对，待核实
   //    queryMap = Query.parse("2:成交额大于0万小于1万")

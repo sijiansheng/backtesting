@@ -153,6 +153,8 @@ object Scheduler {
             filters += SumValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
           case "direct" =>
             filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
+          case "simple" =>
+            filters += SimpleFilter(prefix, values(0))
           case _ =>
             println("unknown")
         }

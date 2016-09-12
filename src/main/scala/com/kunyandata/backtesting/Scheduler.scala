@@ -46,38 +46,50 @@ object Scheduler {
 
       while (it.hasNext()) {
 
-        val message = new String(it.next().message())
-        println(message)
-        val jsonValue = Json.parse(message)
+        try {
 
-        val uid = (jsonValue \ "uid").as[Long]
-        val session = (jsonValue \ "session").as[Long]
-        val condition = (jsonValue \ "condition").as[String]
-        val startDate = (jsonValue \ "start_time").as[String]
-        val endDate = (jsonValue \ "end_time").as[String]
+          val beginTime = System.currentTimeMillis()
+          val message = new String(it.next().message())
+          println(message)
+          val jsonValue = Json.parse(message)
 
-        val queryMap = Query.parse(condition)
+          val uid = (jsonValue \ "uid").as[Long]
+          val session = (jsonValue \ "session").as[Long]
+          val condition = (jsonValue \ "condition").as[String]
+          val startDate = (jsonValue \ "start_time").as[String]
+          val endDate = (jsonValue \ "end_time").as[String]
 
-        System.out.println(queryMap)
-        val result = filter(queryMap, startDate, endDate)
+          val queryMap = Query.parse(condition)
+          System.out.println(queryMap)
+          val result = filter(queryMap, startDate, endDate)
 
-        var rightOption = condition
+          var rightOption = condition
 
-        result._2.split(",").foreach(x => {
-          rightOption = rightOption.replaceFirst(x, "")
-        })
+          result._2.split(",").foreach(x => {
+            rightOption = rightOption.replaceFirst(x, "")
+          })
 
-        val resultValue = Json.obj(
-          "uid" -> uid,
-          "session" -> session,
-          "start_time" -> startDate,
-          "end_time" -> endDate,
-          "stocks" -> result._1,
-          "wrong_condition" -> result._2,
-          "right_condition" -> rightOption
-        )
+          val finishTime = System.currentTimeMillis()
+          val resultValue = Json.obj(
+            "uid" -> uid,
+            "session" -> session,
+            "start_time" -> startDate,
+            "end_time" -> endDate,
+            "stocks" -> result._1,
+            "wrong_condition" -> result._2,
+            "right_condition" -> rightOption,
+            "begin_time_stamp" -> beginTime,
+            "finish_time_stamp" -> finishTime,
+            "cost_time" -> (finishTime - beginTime)
+          )
 
-        producerHandler.sendMessage(Json.stringify(resultValue))
+          producerHandler.sendMessage(Json.stringify(resultValue))
+
+        } catch {
+          case e: Exception =>
+            e.printStackTrace()
+        }
+
       }
 
     }
@@ -121,24 +133,29 @@ object Scheduler {
 
         }
 
-        println("Value: " + FilterType.apply(key).toString)
+        try {
+          println("Value: " + FilterType.apply(key).toString)
+        } catch {
+          case e: NoSuchElementException =>
+            println("Unknown enum id: " + key)
+        }
 
-      filterType match {
-        case "all_days_value" =>
-          filters += AllDayValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
-        case "conti_value" =>
-          filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
-        case "conti_rank" =>
-          filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-        case "single_value" =>
-          filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
-        case "sum_value" =>
-          filters += SumValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
-        case "direct" =>
-          filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
-        case _ =>
-          println("unknown")
-      }
+        filterType match {
+          case "all_days_value" =>
+            filters += AllDayValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
+          case "conti_value" =>
+            filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
+          case "conti_rank" =>
+            filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          case "single_value" =>
+            filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
+          case "sum_value" =>
+            filters += SumValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
+          case "direct" =>
+            filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
+          case _ =>
+            println("unknown")
+        }
 
       }
 

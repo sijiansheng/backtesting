@@ -55,6 +55,7 @@ object Scheduler {
 
           val uid = (jsonValue \ "uid").as[Long]
           val session = (jsonValue \ "session").as[Long]
+          val pushTime = (jsonValue \ "push_time").as[Long]
           val condition = (jsonValue \ "condition").as[String]
           val startDate = (jsonValue \ "start_time").as[String]
           val endDate = (jsonValue \ "end_time").as[String]
@@ -73,6 +74,7 @@ object Scheduler {
           val resultValue = Json.obj(
             "uid" -> uid,
             "session" -> session,
+            "push_time" -> pushTime,
             "start_time" -> startDate,
             "end_time" -> endDate,
             "stocks" -> result._1,

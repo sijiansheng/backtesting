@@ -152,7 +152,7 @@ object Rules {
       case "机构持股数大于x万小于x万" => (109, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       case "高管增股" => (40001, "高管增股")
-      case "高管减股" => (40002, "高管减股")
+      case "高管减股" => (40001, "高管减股")
 
       // 技术面数据
       case "涨跌幅大于x%" => (201, bigger(queryNumbers(0)))

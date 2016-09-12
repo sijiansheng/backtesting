@@ -47,8 +47,6 @@ object TestProcess extends App {
 
   }
 
-
-
   val conditionGroupTwo = List(
     "2:涨跌幅大于0.08%小于0.09%",
     "2:跌幅大于0.06%小于0.07%",
@@ -111,16 +109,14 @@ object TestProcess extends App {
   println(queryMap)
   result = Scheduler.filter(queryMap, "2016-08-25", "2016-08-25")
   stocks = result._1
-  println(stocks.size)
-  println(stocks)
-//  assert(stocks.toList == List("002792"))
+  assert(stocks.size == 1165)
+  assert(stocks.head == "000002")
 
   queryMap = Query.parse("4:高管减股")
   result = Scheduler.filter(queryMap, "2016-08-25", "2016-08-25")
   stocks = result._1
-  println(stocks.size)
-  println(stocks)
-//  assert(stocks.toList == List("002792"))
+  assert(stocks.size == 1696)
+  assert(stocks.head == "000001")
 
   //这个得出的结果不对，待核实
   //    queryMap = Query.parse("2:成交额大于0万小于1万")
@@ -253,90 +249,41 @@ object TestProcess extends App {
   assert(stocks.size == 26)
   assert(stocks.toList.head == "600141")
 
-  //redis目前没有行为数据
-  /* queryMap = Query.parse("4:查看热度连续2天上涨超过100000")
-   result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
-   stocks = result._1
-   println("1")
-   value = ""
-   stocks.foreach(
-     x => {
-       value += x + ","
-     }
-   )
-   println(value.stripSuffix(","))
-   compares = List("000002")
-   //    assert(stocks.toList == compares)
+  queryMap = Query.parse("4:查看热度连续2天上涨超过100000")
+  result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
+  stocks = result._1
+  compares = List("000002")
+  assert(stocks.toList == compares)
 
-   queryMap = Query.parse("4:查看热度连续2天以上上涨超过100000")
-   result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
-   stocks = result._1
-   println("1")
-   value = ""
-   stocks.foreach(
-     x => {
-       value += x + ","
-     }
-   )
-   println(value.stripSuffix(","))
-   compares = List("000002")
-   //    assert(stocks.toList == compares)
+  queryMap = Query.parse("4:查看热度连续2天以上上涨超过100000")
+  result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
+  stocks = result._1
+  compares = List("000002")
+  assert(stocks.toList == compares)
 
-   queryMap = Query.parse("4:查看热度连续4天以上出现在top5")
-   result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
-   stocks = result._1
-   println("1")
-   value = ""
-   stocks.foreach(
-     x => {
-       value += x + ","
-     }
-   )
-   println(value.stripSuffix(","))
-   compares = List("000002", "300372")
-   //    assert(stocks.toList == compares)
-   //4
-   queryMap = Query.parse("4:查看热度连续4天超过100000")
-   result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
-   stocks = result._1
-   println("1")
-   value = ""
-   stocks.foreach(
-     x => {
-       value += x + ","
-     }
-   )
-   println(value.stripSuffix(","))
-   compares = List("000002", "300372")
-   //    assert(stocks.toList == compares)
+  queryMap = Query.parse("4:查看热度连续4天以上出现在top5")
+  result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
+  stocks = result._1
+  compares = List("000002", "300372")
+  assert(stocks.toList == compares)
 
-   queryMap = Query.parse("4:查看热度连续5天以上超过100000")
-   result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
-   stocks = result._1
-   compares = List("000002")
-   println("1")
-   value = ""
-   stocks.foreach(
-     x => {
-       value += x + ","
-     }
-   )
-   println(value.stripSuffix(","))
-   //    assert(stocks.toList == compares)
+  queryMap = Query.parse("4:查看热度连续4天超过100000")
+  result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
+  stocks = result._1
+  compares = List("000002")
+  assert(stocks.toList == compares)
 
-   queryMap = Query.parse("4:查看热度连续4天出现在top5")
-   result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
-   stocks = result._1
-   println("1")
-   value = ""
-   stocks.foreach(
-     x => {
-       value += x + ","
-     }
-   )
-   println(value.stripSuffix(","))
-   compares = List("000002", "300372")
-   //    assert(stocks.toList == compares)*/
+  queryMap = Query.parse("4:查看热度连续5天以上超过100000")
+  result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
+  stocks = result._1
+  compares = List("000002")
+  assert(stocks.toList == compares)
+
+  queryMap = Query.parse("4:查看热度连续4天出现在top5")
+  result = Scheduler.filter(queryMap, "2016-07-01", "2016-08-30")
+  stocks = result._1
+  compares = List("000002", "300372")
+  assert(stocks.toList == compares)
 
   queryMap = Query.parse("4:盈利预增1次")
   result = Scheduler.filter(queryMap, "2016-08-01", "2016-08-26")

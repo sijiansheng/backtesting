@@ -26,7 +26,7 @@ object Rules {
 
     number.contains("%") match {
 
-      case true => s"${number.replaceAll("%", "").toDouble / 100},${Int.MaxValue}"
+      case true => s"${number.replaceAll("%", "").toDouble},${Int.MaxValue}" // 保留百分比的解析
       case _ => s"$number,${Int.MaxValue}"
     }
   }
@@ -39,7 +39,7 @@ object Rules {
 
     number.contains("%") match {
 
-      case true => s"${Int.MinValue},${number.replaceAll("%", "").toDouble / 100}"
+      case true => s"${Int.MinValue},${number.replaceAll("%", "").toDouble}" // 保留百分比的解析
       case _ => s"${Int.MinValue},$number"
     }
   }
@@ -52,8 +52,8 @@ object Rules {
 
     number.contains("%") match {
 
-      case true => s"${number.replaceAll("%", "").toDouble / 100}" +
-        s",${number.replaceAll("%", "").toDouble / 100}"
+      case true => s"${number.replaceAll("%", "").toDouble}" +
+        s",${number.replaceAll("%", "").toDouble}"  // 保留百分比的解析
       case _ => s"$number,$number"
     }
   }
@@ -73,7 +73,7 @@ object Rules {
 
           num.contains("%") match {
 
-            case true => num.replaceAll("%", "").toDouble / 100
+            case true => num.replaceAll("%", "").toDouble // 保留百分比的解析
             case _ => num.toDouble
           }
         })

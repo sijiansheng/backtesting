@@ -116,15 +116,15 @@ object Rules {
       case "流通股本等于x万" => (102, equel(queryNumbers(0)))
       case "流通股本大于x万小于x万" => (102, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
-      case "总市值大于x亿" => (103, bigger(queryNumbers(0)))
-      case "总市值小于x亿" => (103, smaller(queryNumbers(0)))
-      case "总市值等于x亿" => (103, equel(queryNumbers(0)))
-      case "总市值大于x亿小于x亿" => (103, biggerAndSmaller(queryNumbers.slice(0, 2)))
+      case "总市值大于x万" => (103, bigger(queryNumbers(0)))
+      case "总市值小于x万" => (103, smaller(queryNumbers(0)))
+      case "总市值等于x万" => (103, equel(queryNumbers(0)))
+      case "总市值大于x万小于x万" => (103, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
-      case "流通市值大于x亿" => (104, bigger(queryNumbers(0)))
-      case "流通市值小于x亿" => (104, smaller(queryNumbers(0)))
-      case "流通市值等于x亿" => (104, equel(queryNumbers(0)))
-      case "流通市值大于x亿小于x亿" => (104, biggerAndSmaller(queryNumbers.slice(0, 2)))
+      case "流通市值大于x万" => (104, bigger(queryNumbers(0)))
+      case "流通市值小于x万" => (104, smaller(queryNumbers(0)))
+      case "流通市值等于x万" => (104, equel(queryNumbers(0)))
+      case "流通市值大于x万小于x万" => (104, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       case "流通比例大于x%" => (105, bigger(queryNumbers(0)))
       case "流通比例小于x%" => (105, smaller(queryNumbers(0)))

@@ -12,7 +12,11 @@ object Rules {
     */
   def getNumbers(query: String): Array[String] = {
 
-    val temp = query.replaceAll("[\\u4e00-\\u9fa5]", " ").replaceAll("[a-zA-Z~]", " ").trim.split(" ")
+    val temp = query
+      .replaceAll("[\\u4e00-\\u9fa5]", " ")
+      .replaceAll("[a-zA-Z~]", " ")
+      .replaceAll("[（）]", "")
+      .trim.split(" ")
 
     temp.filter(_.length > 0)
   }
@@ -199,6 +203,8 @@ object Rules {
       case "收益率小于x%" => (209, smaller(queryNumbers(0)))
       case "收益率等于x%" => (209, equel(queryNumbers(0)))
       case "收益率大于x%小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
+
+      case "日均查看热度离均差（MAx）大于x倍前x天日均热度标准差" => (210, s"${queryNumbers(1)},${queryNumbers(0)},${queryNumbers(2)}")
 
       case "资金流入大于x万" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x万" => (301, smaller(queryNumbers(0)))

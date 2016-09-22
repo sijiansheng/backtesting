@@ -30,7 +30,7 @@ class StandardDeviationFilterTest extends FlatSpec with Matchers {
 
       val meanCriterion = cirterion
       val stdCriterion = cirterion
-      val result = StandardDeviationFilter(prefix, multiple, meanCriterion, stdCriterion, offset, offset).filter()
+      val result = StandardDeviationFilter(prefix, multiple, meanCriterion, stdCriterion, offset).filter()
 
       for (code <- result) {
 

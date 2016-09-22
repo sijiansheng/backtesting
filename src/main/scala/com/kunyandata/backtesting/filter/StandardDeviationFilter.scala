@@ -14,8 +14,8 @@ import scala.collection.mutable
   * 日均查看热度离均差（MA30）大于 x 倍前30天日均热度标准差
   * prefix redis key前缀
   * ratio 比率 XX倍
-  * meanValue 平均值计算标准，如30天平均值用30标示 5天平均值用5标示
-  * standardDeviation 标准差计算标准，如30天标准差用30标示 5天标准差用5标示
+  * meanValue 平均值计算标准，如30天平均值用30表示 5天平均值用5表示
+  * standardDeviation 标准差计算标准，如30天标准差用30表示 5天标准差用5表示
   * day查询日期的偏移量
   */
 class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, day: Int) extends Filter {

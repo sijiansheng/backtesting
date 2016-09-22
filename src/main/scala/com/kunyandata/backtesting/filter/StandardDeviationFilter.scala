@@ -11,7 +11,7 @@ import scala.collection.mutable
 /**
   * Created by sijiansheng on 2016/9/21.
   */
-class StandardDeviationFilter private(prefix: String, multiple: Double, meanCriterion: Int, stdCriterion: Int, day: Int) extends Filter {
+class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, day: Int) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -19,10 +19,9 @@ class StandardDeviationFilter private(prefix: String, multiple: Double, meanCrit
     val jedis = RedisHandler.getInstance().getJedis
 
     val date = CommonUtil.getDateStr(day)
-    val key = prefix + date
     val valuesAndScores = jedis.zrangeByScoreWithScores(prefix + date, Double.MinValue, Double.MaxValue)
-    val meanValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores("heat_mean_" + meanCriterion + "_" + date, Double.MinValue, Double.MaxValue))
-    val standardDeviationValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores("heat_std_" + stdCriterion + "_" + date, Double.MinValue, Double.MaxValue))
+    val meanValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores("heat_mean_" + meanValue + "_" + date, Double.MinValue, Double.MaxValue))
+    val standardDeviationValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores("heat_std_" + standardDeviation + "_" + date, Double.MinValue, Double.MaxValue))
 
     val iterator = valuesAndScores.iterator()
 
@@ -36,7 +35,7 @@ class StandardDeviationFilter private(prefix: String, multiple: Double, meanCrit
 
       if (meanScore != Double.MaxValue && standardDeviationScore != Double.MaxValue) {
 
-        if (score.toDouble > (multiple * standardDeviationScore + meanScore)) {
+        if (score.toDouble > (ratio * standardDeviationScore + meanScore)) {
           resultSet += value
         }
 
@@ -44,11 +43,9 @@ class StandardDeviationFilter private(prefix: String, multiple: Double, meanCrit
 
     }
 
-
     jedis.close()
     resultSet.toList
   }
-
 
   def valueAndScoreToMap(set: java.util.Set[Tuple]): mutable.Map[String, Double] = {
 

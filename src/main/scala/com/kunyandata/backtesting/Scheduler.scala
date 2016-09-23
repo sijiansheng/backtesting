@@ -46,31 +46,52 @@ object Scheduler {
 
       while (it.hasNext()) {
 
-        val message = new String(it.next().message())
-        println(message)
-        val jsonValue = Json.parse(message)
+        try {
 
-        val uid = (jsonValue \ "uid").as[Long]
-        val session = (jsonValue \ "session").as[Long]
-        val condition = (jsonValue \ "condition").as[String]
-        val startDate = (jsonValue \ "start_time").as[String]
-        val endDate = (jsonValue \ "end_time").as[String]
+          val beginTime = System.currentTimeMillis()
+          val message = new String(it.next().message())
+          println(message)
+          val jsonValue = Json.parse(message)
 
-        val queryMap = Query.parse(condition)
+          val uid = (jsonValue \ "uid").as[Long]
+          val session = (jsonValue \ "session").as[Long]
+          val pushTime = (jsonValue \ "push_time").as[Long]
+          val condition = (jsonValue \ "condition").as[String]
+          val startDate = (jsonValue \ "start_time").as[String]
+          val endDate = (jsonValue \ "end_time").as[String]
 
-        System.out.println(queryMap)
-        val result = filter(queryMap, startDate, endDate)
+          val queryMap = Query.parse(condition)
+          System.out.println(queryMap)
+          val result = filter(queryMap, startDate, endDate)
 
-        val resultValue = Json.obj(
-          "uid" -> uid,
-          "session" -> session,
-          "start_time" -> startDate,
-          "end_time" -> endDate,
-          "stocks" -> result._1,
-          "wrong_condition" -> result._2
-        )
+          var rightOption = condition
 
-        producerHandler.sendMessage(Json.stringify(resultValue))
+          result._2.split(",").foreach(x => {
+            rightOption = rightOption.replaceFirst(x, "")
+          })
+
+          val finishTime = System.currentTimeMillis()
+          val resultValue = Json.obj(
+            "uid" -> uid,
+            "session" -> session,
+            "push_time" -> pushTime,
+            "start_time" -> startDate,
+            "end_time" -> endDate,
+            "stocks" -> result._1,
+            "wrong_condition" -> result._2,
+            "right_condition" -> rightOption,
+            "begin_time_stamp" -> beginTime,
+            "finish_time_stamp" -> finishTime,
+            "cost_time" -> (finishTime - beginTime)
+          )
+
+          producerHandler.sendMessage(Json.stringify(resultValue))
+
+        } catch {
+          case e: Exception =>
+            e.printStackTrace()
+        }
+
       }
 
     }
@@ -82,7 +103,7 @@ object Scheduler {
 
   def filter(queryMap: Map[Int, String], startDate: String, endDate: String): (mutable.ListBuffer[String], String) = {
 
-    val wrongOption = queryMap.getOrElse(-1, "")
+    var wrongOption = queryMap.getOrElse(-1, "")
     val startOffset = CommonUtil.getOffset(startDate)
     val endOffset = CommonUtil.getOffset(endDate)
 
@@ -95,40 +116,56 @@ object Scheduler {
       var filterType = ""
 
       val key = pair._1
-      val values = pair._2.split(",")
+      if (key > 0) {
 
-      try {
+        val values = pair._2.split(",")
 
-        val infos = FilterType.apply(key).toString.split("\\|")
-        prefix = infos(0)
-        filterType = infos(1)
+        try {
 
-      } catch {
+          val infos = FilterType.apply(key).toString.split("\\|")
+          prefix = infos(0)
+          filterType = infos(1)
 
-        case e: NoSuchElementException =>
-        case e: IndexOutOfBoundsException =>
-          e.printStackTrace()
-          println(FilterType.apply(key).toString)
+        } catch {
 
-      }
+          case e: NoSuchElementException =>
+          case e: IndexOutOfBoundsException =>
+            e.printStackTrace()
+            println(FilterType.apply(key).toString)
 
-      println("Value: " + FilterType.apply(key).toString)
+        }
 
-      filterType match {
-        case "all_days_value" =>
-          filters += AllDayValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
-        case "conti_value" =>
-          filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
-        case "conti_rank" =>
-          filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
-        case "single_value" =>
-          filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
-        case "sum_value" =>
-          filters += SumValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
-        case "direct" =>
-          filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
-        case _ =>
-          println("unknown")
+        try {
+          println("Value: " + FilterType.apply(key).toString)
+        } catch {
+          case e: NoSuchElementException =>
+            println("Unknown enum id: " + key)
+        }
+
+        filterType match {
+          case "all_days_value" =>
+            filters += AllDayValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
+          case "conti_value" =>
+            filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
+          case "conti_rank" =>
+            filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+          case "single_value" =>
+            filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
+          case "sum_value" =>
+            filters += SumValueFilter(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
+          case "direct" =>
+            filters += SimpleUnionFilter(prefix, values(0), startOffset, endOffset)
+          case "simple" =>
+            filters += SimpleFilter(prefix, values(0))
+          case "standard_deviation" =>
+            if (startOffset == endOffset)
+              filters += StandardDeviationFilter(prefix, values(0).toDouble, values(1).toInt, values(2).toInt, startOffset)
+            else
+              wrongOption += ",查询标准差的起始日期必须与结束日期相同"
+          case _ =>
+            println("unknown")
+        }
+
       }
 
     })

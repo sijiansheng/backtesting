@@ -17,8 +17,7 @@ object FilterType extends Enumeration {
   val HolderCount= Value(107, "holder_count|single_value") // 股东户数
   val FloatStockNum = Value(108, "float_stock_num|single_value") // 户均持股数
 
-  // todo 这边需要新增一个filterType，机构持股数，id为109
-//  val FloatStockNum = Value(109, "float_stock_num|single_value") // 机构持股数
+  val InstitutionStockNum = Value(109, "institution_stock_num|single_value") // 机构持股数
 
   val AbsoluteChangePercent = Value(201, "absolute_change_percent_|all_days_value") // 涨跌幅（绝对值）
   val IncChangePercent = Value(202, "inc_change_percent_|all_days_value") // 涨幅
@@ -29,6 +28,7 @@ object FilterType extends Enumeration {
   val Turnover = Value(207, "turnover_|all_days_value") // 成交额
   val SharePrice = Value(208, "share_price_|all_days_value") // 股价
   val ChangePercent = Value(209, "change_percent_|all_days_value") // 涨跌幅，收益率
+  val StandardDeviation = Value(210, "count_heat_|standard_deviation") //热度标准差
 
   // 股票相关新闻访问量和股票相关新闻转载量
   val Visit = Value(401, "visit_|all_days_value") // 股票相关新闻的日访问量
@@ -55,8 +55,7 @@ object FilterType extends Enumeration {
   val HeatRank = Value(15004, "count_heat_|conti_rank") //查看热度连续X天出现在topX
   val HeatValue = Value(15005, "count_heat_|conti_value") //查看热度连续X天超过X
 
-  val ChangeInHolding = Value(40001,"change_in_holding|single_value") // 增减持
-  val InstitutionStockNum = Value(40002,"institution_stock_num|single_value") // 机构持股
+  val ChangeInHolding = Value(40001,"over_or_under_weight_holding|simple") // 增减持
   // 事件
   val Events = Value(40003, "events_|direct") // 事件相关股票
 

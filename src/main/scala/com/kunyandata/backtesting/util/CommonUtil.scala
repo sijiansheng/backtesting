@@ -1,6 +1,8 @@
 package com.kunyandata.backtesting.util
 
-import java.text.SimpleDateFormat
+import java.text.{ParseException, SimpleDateFormat}
+
+import com.kunyandata.backtesting.logger.BKLogger
 
 /**
   * Created by YangShuai
@@ -29,8 +31,20 @@ object CommonUtil {
     * @return 给定字符串所代表的日期与当日的偏差值
     */
   def getOffset(dateString: String): Int = {
-    val timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(dateString).getTime
-    ((timeStamp - System.currentTimeMillis()) / (24l * 60 * 60 * 1000)).toInt
+
+    try {
+
+      val timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(dateString).getTime
+      ((timeStamp - System.currentTimeMillis()) / (24l * 60 * 60 * 1000)).toInt
+
+    } catch {
+
+      case e: ParseException =>
+        BKLogger.exception(e)
+        -1
+
+    }
+
   }
 
 }

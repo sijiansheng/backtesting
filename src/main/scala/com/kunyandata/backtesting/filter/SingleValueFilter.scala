@@ -20,6 +20,8 @@ class SingleValueFilter private(prefix: String, min: Double, max: Double) extend
     val jedis = RedisHandler.getInstance().getJedis
     val result = jedis.zrangeByScore(key, min, max)
 
+    jedis.close()
+
     result.toList
   }
 

@@ -15,16 +15,18 @@ class SimpleUnionFilter private(prefix: String, event: String, start: Int, end: 
 
   override def filter(): List[String] = {
 
-    val resultSet = mutable.Set[String]()
+    var resultSet = mutable.Set[String]()
+    val jedis = RedisHandler.getInstance().getJedis
 
     for (i <- start to end) {
 
       val key = prefix + CommonUtil.getDateStr(i)
-      val jedis = RedisHandler.getInstance().getJedis
-      resultSet.union(jedis.hget(key, event).split(",").toSet)
-
+      val value = jedis.hget(key, event)
+      if (value != null)
+        resultSet ++= value.split(",").toSet
     }
 
+    jedis.close()
     resultSet.toList
   }
 

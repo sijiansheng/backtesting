@@ -35,7 +35,7 @@ object CommonUtil {
     new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
   }
 
-  
+
   /**
     * 获得给定字符串所代表的日期与当日的偏差值
     * 例如：若给的是昨天则返回-1

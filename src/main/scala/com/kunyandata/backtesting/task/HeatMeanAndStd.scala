@@ -65,9 +65,9 @@ object HeatMeanAndStd {
     // 指定开始日期
     var date = args(4)
 
-    // 2016-02-04
+    // 指定需要计算的历史天数
+    val offDay = args(5).toInt
 
-    val offDay = 5
     var key = prefix + date
     val endDate = CommonUtil.getDateStr("2016-01-06", offDay)
 

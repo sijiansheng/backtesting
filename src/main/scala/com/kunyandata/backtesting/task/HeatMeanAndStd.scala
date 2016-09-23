@@ -7,6 +7,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
+  * 跑历史全量数据
   * Created by dcyang on 2016/9/21 0021.
   */
 object HeatMeanAndStd {
@@ -66,9 +67,9 @@ object HeatMeanAndStd {
 
     // 2016-02-04
 
-    val offDays = 5
+    val offDay = 5
     var key = prefix + date
-    val endDate = CommonUtil.getDateStr("2016-01-06", offDays)
+    val endDate = CommonUtil.getDateStr("2016-01-06", offDay)
 
     while(date != endDate){
 
@@ -84,7 +85,7 @@ object HeatMeanAndStd {
         map.put(code, new ArrayBuffer[Double]())
       }
 
-      for (offset <- 1 to offDays) {
+      for (offset <- 1 to offDay) {
 
         val preKey = prefix + CommonUtil.getDateStr(date, -offset)
         val codesWithScores: util.Set[Tuple] = jedis.zrangeWithScores(preKey, start, end)
@@ -95,6 +96,7 @@ object HeatMeanAndStd {
         while(iterator.hasNext){
 
           val code = iterator.next()
+
           if (codeScoreMap.contains(code)) {
             map(code).+=(codeScoreMap(code))
           }
@@ -106,7 +108,7 @@ object HeatMeanAndStd {
       val codeWithMean: mutable.Map[String, Double] = map.map(x => (x._1, getMean(x._2)))
       val codeWithStd = map.map(x => (x._1, getStd(x._2)))
 
-      val outMeanKey = "heat_mean_" + offDays + "_" + date
+      val outMeanKey = "heat_mean_" + offDay + "_" + date
       val meanIterator = codeWithMean.iterator
 
       while(meanIterator.hasNext){
@@ -114,13 +116,14 @@ object HeatMeanAndStd {
         val codeAndMean: (String, Double) = meanIterator.next()
         val code = codeAndMean._1
         val mean = codeAndMean._2
+
         if(mean != -1.0){
           jedis.zadd(outMeanKey, mean, code)
         }
 
       }
 
-      val outStdKey = "heat_std_" + offDays + "_" + date
+      val outStdKey = "heat_std_" + offDay + "_" + date
       val stdIterator = codeWithStd.iterator
 
       while(stdIterator.hasNext){
@@ -128,13 +131,14 @@ object HeatMeanAndStd {
         val codeAndStd: (String, Double) = stdIterator.next()
         val code = codeAndStd._1
         val std = codeAndStd._2
+
         if(std != -1.0){
           jedis.zadd(outStdKey, std, code)
         }
 
       }
 
-      println(date + "\t" + offDays)
+      println(date + "\t" + offDay)
       date = CommonUtil.getDateStr(date, -1)
       key = prefix + date
 

@@ -90,7 +90,7 @@ object HeatMeanAndStdOneDay {
     val offDays = List(5, 7, 10, 14, 15, 20, 30, 60)
     val key = prefix + date
 
-    // 处理不同的计算天数5、10、15、20、30
+    // 处理不同的计算天数5、7、10、14、15、20、30、60
     for (offday <- offDays){
 
       val start = Int.MinValue

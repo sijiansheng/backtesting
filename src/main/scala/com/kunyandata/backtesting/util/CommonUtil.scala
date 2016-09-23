@@ -3,6 +3,7 @@ package com.kunyandata.backtesting.util
 import java.text.{ParseException, SimpleDateFormat}
 
 import com.kunyandata.backtesting.logger.BKLogger
+import com.sun.scenario.effect.Offset
 
 /**
   * Created by YangShuai
@@ -23,6 +24,18 @@ object CommonUtil {
     new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
   }
 
+  /**
+    * 获取距离指定天偏差天数的日期字符串
+    * @param date 指定日期字符串
+    * @param offset 偏差天数
+    * @return yyyy-MM-dd格式的代表日期的字符串
+    */
+  def getDateStr(date: String, offset: Int): String = {
+    val timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(date).getTime + offset * 24l * 60 * 60 * 1000
+    new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
+  }
+
+  
   /**
     * 获得给定字符串所代表的日期与当日的偏差值
     * 例如：若给的是昨天则返回-1

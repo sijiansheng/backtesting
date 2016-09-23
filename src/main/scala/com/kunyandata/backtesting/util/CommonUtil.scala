@@ -3,7 +3,7 @@ package com.kunyandata.backtesting.util
 import java.text.{ParseException, SimpleDateFormat}
 
 import com.kunyandata.backtesting.logger.BKLogger
-import com.sun.scenario.effect.Offset
+
 
 /**
   * Created by YangShuai

@@ -1,4 +1,4 @@
-package scala.com.kunyandata.backtesting.task
+package com.kunyandata.backtesting.task
 import java.util
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil

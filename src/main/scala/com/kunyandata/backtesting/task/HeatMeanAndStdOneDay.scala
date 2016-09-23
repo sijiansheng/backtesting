@@ -1,4 +1,4 @@
-package scala.com.kunyandata.backtesting.task
+package com.kunyandata.backtesting.task
 import java.text.SimpleDateFormat
 import java.util
 import com.kunyandata.backtesting.io.RedisHandler
@@ -82,9 +82,9 @@ object HeatMeanAndStdOneDay {
 
     val prefix = "count_heat_"
 
-    // 获取当天时间
+    // 获取前一天时间
     val DATE_FORMAT = "yyyy-MM-dd"
-    val timeStamp = System.currentTimeMillis()
+    val timeStamp = System.currentTimeMillis() - 24l * 60 * 60 * 1000
     val date = new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
 
     val offDays = List(5, 7, 10, 14, 15, 20, 30, 60)

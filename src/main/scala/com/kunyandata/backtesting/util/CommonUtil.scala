@@ -55,7 +55,6 @@ object CommonUtil {
       case e: ParseException =>
         BKLogger.exception(e)
         -1
-
     }
 
   }
@@ -79,7 +78,6 @@ object CommonUtil {
       case e: ParseException =>
         BKLogger.exception(e)
         -1
-
     }
 
   }

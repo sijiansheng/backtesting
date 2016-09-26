@@ -26,7 +26,7 @@ object HeatMeanAndStdOneDay {
 
     while (iterator.hasNext) {
       val valueAndScore = iterator.next()
-      resultMap += (valueAndScore.getElement -> valueAndScore.getScore)
+      resultMap.put(valueAndScore.getElement, valueAndScore.getScore)
     }
 
     resultMap

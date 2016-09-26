@@ -60,4 +60,28 @@ object CommonUtil {
 
   }
 
+  /**
+    * 获取两个指定日期相差的天数
+    * @param startDate 开始日期
+    * @param endDate 结束日期
+    * @return 相差天数
+    */
+  def getOffset(startDate: String, endDate: String): Int = {
+
+    try {
+
+      val startTimeStamp = new SimpleDateFormat(DATE_FORMAT).parse(startDate).getTime
+      val endTimeStamp = new SimpleDateFormat(DATE_FORMAT).parse(endDate).getTime
+      ((startTimeStamp - endTimeStamp) / (24l * 60 * 60 * 1000)).toInt
+
+    } catch {
+
+      case e: ParseException =>
+        BKLogger.exception(e)
+        -1
+
+    }
+
+  }
+
 }

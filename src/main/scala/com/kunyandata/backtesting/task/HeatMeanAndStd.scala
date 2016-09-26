@@ -7,7 +7,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  * 跑历史全量数据
+  * 跑指定日期（如：2016-09-21）以前的指定天数（如：5,7,10,14,15,20,30,60）的历史全量数据
   * Created by dcyang on 2016/9/21 0021.
   */
 object HeatMeanAndStd {
@@ -19,7 +19,7 @@ object HeatMeanAndStd {
 
     while (iterator.hasNext) {
       val valueAndScore = iterator.next()
-      resultMap += (valueAndScore.getElement -> valueAndScore.getScore)
+      resultMap.put(valueAndScore.getElement, valueAndScore.getScore)
     }
 
     resultMap
@@ -63,16 +63,18 @@ object HeatMeanAndStd {
     val prefix = "count_heat_"
 
     // 指定开始日期
-    var date = args(4)
+    val initData = args(4)
 
     // 指定需要计算的历史天数
     val offDay = args(5).toInt
 
-    var key = prefix + date
     val endDate = CommonUtil.getDateStr("2016-01-06", offDay)
+    val dayNums = CommonUtil.getOffset(initData, endDate)
 
-    while(date != endDate){
+    for(offDayNum <- 0 to dayNums){
 
+      val date = CommonUtil.getDateStr(initData,-offDayNum)
+      val key = prefix + date
       val start = Int.MinValue
       val end = Int.MaxValue
       val map = mutable.Map[String, ArrayBuffer[Double]]()
@@ -139,8 +141,7 @@ object HeatMeanAndStd {
       }
 
       println(date + "\t" + offDay)
-      date = CommonUtil.getDateStr(date, -1)
-      key = prefix + date
+
 
     }
 

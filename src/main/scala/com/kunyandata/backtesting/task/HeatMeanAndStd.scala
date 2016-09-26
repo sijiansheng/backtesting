@@ -74,7 +74,6 @@ object HeatMeanAndStd {
       val iterator = codes.iterator()
 
       while(iterator.hasNext){
-
         val code = iterator.next()
         map.put(code, new ArrayBuffer[Double]())
       }

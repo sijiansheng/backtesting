@@ -40,14 +40,8 @@ object HeatMeanAndStdOneDay {
     * @author dcyang
     */
   def getMean(arrayBuffer: ArrayBuffer[Double]): Double = {
-
     val num: Int = arrayBuffer.size
-
-    if (num == 0)  -1.0
-    else{
-      val mean: Double = arrayBuffer.sum / num
-      mean
-    }
+    if (num == 0)  -1.0 else arrayBuffer.sum / num
   }
 
   /**
@@ -63,11 +57,10 @@ object HeatMeanAndStdOneDay {
 
     if (num == 0 || num == 1) -1.0
     else {
-
       val mean = getMean(arrayBuffer)
-      val std: Double = Math.sqrt(arrayBuffer.map(x => Math.pow(x - mean, 2)).sum / (num -1))
-      std
+      Math.sqrt(arrayBuffer.map(x => Math.pow(x - mean, 2)).sum / (num -1))
     }
+
   }
 
   def main(args: Array[String]) {
@@ -102,7 +95,6 @@ object HeatMeanAndStdOneDay {
 
       // 初始Map(股票，ArrayBuffer[热度])
       while(iterator.hasNext){
-
         val code = iterator.next()
         map.put(code, new ArrayBuffer[Double]())
       }
@@ -116,6 +108,7 @@ object HeatMeanAndStdOneDay {
         val iterator = codes.iterator()
 
         while(iterator.hasNext){
+
           val code = iterator.next()
 
           if (codeScoreMap.contains(code)) {

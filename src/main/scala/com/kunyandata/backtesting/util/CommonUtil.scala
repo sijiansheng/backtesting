@@ -20,7 +20,9 @@ object CommonUtil {
     * @return
     */
   def getDateStr(offset: Int): String = {
+
     val timeStamp = System.currentTimeMillis() + offset * 24l * 60 * 60 * 1000
+
     new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
   }
 
@@ -31,7 +33,9 @@ object CommonUtil {
     * @return yyyy-MM-dd格式的代表日期的字符串
     */
   def getDateStr(date: String, offset: Int): String = {
+
     val timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(date).getTime + offset * 24l * 60 * 60 * 1000
+
     new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
   }
 
@@ -48,12 +52,13 @@ object CommonUtil {
     try {
 
       val timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(dateString).getTime
-      ((timeStamp - System.currentTimeMillis()) / (24l * 60 * 60 * 1000)).toInt
 
+      ((timeStamp - System.currentTimeMillis()) / (24l * 60 * 60 * 1000)).toInt
     } catch {
 
       case e: ParseException =>
         BKLogger.exception(e)
+
         -1
     }
 
@@ -71,12 +76,13 @@ object CommonUtil {
 
       val startTimeStamp = new SimpleDateFormat(DATE_FORMAT).parse(startDate).getTime
       val endTimeStamp = new SimpleDateFormat(DATE_FORMAT).parse(endDate).getTime
-      ((startTimeStamp - endTimeStamp) / (24l * 60 * 60 * 1000)).toInt
 
+      ((startTimeStamp - endTimeStamp) / (24l * 60 * 60 * 1000)).toInt
     } catch {
 
       case e: ParseException =>
         BKLogger.exception(e)
+
         -1
     }
 

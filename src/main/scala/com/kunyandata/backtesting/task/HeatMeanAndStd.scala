@@ -26,15 +26,8 @@ object HeatMeanAndStd {
   }
 
   def getMean(arrayBuffer: ArrayBuffer[Double]): Double = {
-
     val num: Int = arrayBuffer.size
-
-    if (num == 0)  -1.0
-    else{
-      val mean: Double = arrayBuffer.sum / num
-      mean
-    }
-
+    if (num == 0)  -1.0 else arrayBuffer.sum / num
   }
 
   def getStd(arrayBuffer: ArrayBuffer[Double]): Double = {
@@ -43,12 +36,10 @@ object HeatMeanAndStd {
 
     if (num == 0 || num == 1) -1.0
     else {
-
       val mean = getMean(arrayBuffer)
-      val std: Double = Math.sqrt(arrayBuffer.map(x => Math.pow(x - mean, 2)).sum / (num -1))
-      std
-
+      Math.sqrt(arrayBuffer.map(x => Math.pow(x - mean, 2)).sum / (num -1))
     }
+
   }
 
   def main(args: Array[String]) {
@@ -81,6 +72,7 @@ object HeatMeanAndStd {
       val codes = jedis.zrange(key, start, end)
 
       val iterator = codes.iterator()
+
       while(iterator.hasNext){
 
         val code = iterator.next()
@@ -141,7 +133,6 @@ object HeatMeanAndStd {
       }
 
       println(date + "\t" + offDay)
-
 
     }
 

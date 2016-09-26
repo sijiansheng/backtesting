@@ -7,7 +7,7 @@ import redis.clients.jedis.Tuple
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 /**
-  * 计算历史热度均值和标准差
+  * 计算指定日期的历史热度均值和标准差
   * Created by dcyang on 2016/9/22 0022.
   */
 object HeatMeanAndStdOneDay {

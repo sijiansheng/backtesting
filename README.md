@@ -20,14 +20,8 @@
 
 #数据列表
 ##只有一份的数据
-qq
-njj
-lhw
-wk
-ydc
-##每天一份的数据（前缀）
-qq
-njj
-lhw
-wk
-ydc
+|key|数据说明|
+|total_equity|总股本|
+##每天一份的数据
+|前缀|数据说明|
+|turnover_|成交额|

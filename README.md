@@ -23,7 +23,26 @@
 |key|数据说明|
 |:---:|:---:|
 |total_equity|总股本|
+| float_equity | 流通股本（万股）|
+| market_value | 总市值 （万元）|
+| liquid_market_value | 流通市值 （万元）|
+| liquid_scale | 流通比例|
+| top_stock_ratio | 十大股东持股比例  |
+| holder_count | 股东户数 （户）|
+| float_stock_num | 户均持股数 |
+| change_in_holding | 增减持（1为增持，0为减持） |
+| over_or_under_weight_holding | 增减持（高管增股，高管减持） |
+| institution_stock_num | 机构持股 （万股）|
+
 ##每天一份的数据
 |前缀|数据说明|
 |:---:|:---:|
-|turnover_|成交额|
+| change_percent | 涨跌幅，收益率|
+| inc_change_percent | 涨幅 （> 0.0）|
+| dec_change_percent | 跌幅 （< 0.0） |
+| absolute_change_percent | 涨跌幅（绝对值） |
+| amplitude | 振幅 |
+| turnoverratio | 换手率 |
+| volume | 成交量 （万股） |
+| turnover | 成交额 （万元） |
+| share_price | 股价 （元） |

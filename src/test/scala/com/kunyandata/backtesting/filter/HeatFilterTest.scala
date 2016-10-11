@@ -21,7 +21,7 @@ class HeatFilterTest extends FlatSpec with Matchers {
     val redisMap = config._1
     RedisHandler.init(redisMap.get("ip").get, redisMap.get("port").get.toInt, redisMap.get("auth").get, redisMap.get("db").get.toInt)
     val jedis = RedisHandler.getInstance().getJedis
-    val result = HeatFilter("diff_heat_", "002018", -10, -3, heatStandard).filter()
+    val result = HeatFilter("count_heat_", "002018", -10, -3, heatStandard).filter()
 
     result.foreach(result => {
       println(result)

@@ -15,16 +15,25 @@ class StandardDeviationFilterTest extends FlatSpec with Matchers {
 
   it should "return a result that is equal the redis data" in {
 
-    val path = ""
+    val path = "e://backtest/config.xml"
 
     val config = Configuration.getConfigurations(path)
     val redisMap = config._1
     RedisHandler.init(redisMap.get("ip").get, redisMap.get("port").get.toInt, redisMap.get("auth").get, redisMap.get("db").get.toInt)
     val jedis = RedisHandler.getInstance().getJedis
-    val prefix = "count_heat_"
-    val offset = -2
+    //    val prefix = "count_heat_"
+    val prefix = "industry_heat_"
+    var meanPrefix = ""
+    var stdPrefix = ""
+
+    if (prefix.contains("industry")) {
+      meanPrefix = "industry_"
+      stdPrefix = "industry_"
+    }
+
+    val offset = -3
     val multiple = 10
-    val cirterions = List(20, 15, 10, 5)
+    val cirterions = List(7, 10, 14, 15)
 
     for (cirterion <- cirterions) {
 
@@ -34,10 +43,11 @@ class StandardDeviationFilterTest extends FlatSpec with Matchers {
 
       for (code <- result) {
 
+        println(code)
         val date = CommonUtil.getDateStr(offset)
         val score = jedis.zscore(prefix + date, code)
-        val redisStd = jedis.zscore("heat_std_" + meanCriterion + "_" + date, code)
-        val redisMean = jedis.zscore("heat_mean_" + meanCriterion + "_" + date, code)
+        val redisStd = jedis.zscore(stdPrefix + "heat_std_" + meanCriterion + "_" + date, code)
+        val redisMean = jedis.zscore(meanPrefix + "heat_mean_" + meanCriterion + "_" + date, code)
         val newMeanAndStd = getMeanAndStd(meanCriterion, stdCriterion, jedis, offset, prefix, code)
 
         val newMean = newMeanAndStd._1
@@ -47,8 +57,8 @@ class StandardDeviationFilterTest extends FlatSpec with Matchers {
           System.exit(0)
         }
 
-        f"$redisMean%.10f" should be(f"${newMean.get}%.10f")
-        f"$redisStd%.10f" should be(f"${newStd.get}%.10f")
+        f"$redisMean%.6f" should be(f"${newMean.get}%.6f")
+        f"$redisStd%.6f" should be(f"${newStd.get}%.6f")
 
         val lastResult = redisMean + multiple * redisStd
         val compareResult = score - lastResult

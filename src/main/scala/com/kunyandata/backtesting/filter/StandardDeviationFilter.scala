@@ -10,7 +10,7 @@ import scala.collection.mutable
 
 /**
   * Created by sijiansheng on 2016/9/21.
-  * 热度离均差过滤器
+  * 热度离均差过滤器和行业热度离均差过滤器
   * 日均查看热度离均差（MA30）大于 x 倍前30天日均热度标准差
   * prefix redis key前缀
   * ratio 比率 XX倍
@@ -24,14 +24,21 @@ class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: 
 
     var resultSet = mutable.Set[String]()
     val jedis = RedisHandler.getInstance().getJedis
+    var meanPrefix = ""
+    var standardDeviationPrefix = ""
+
+    if (prefix.contains("industry")) {
+      meanPrefix = "industry_"
+      standardDeviationPrefix = "industry_"
+    }
 
     val date = CommonUtil.getDateStr(day)
     //获得的某天的所有的离均差
     val valuesAndScores = jedis.zrangeByScoreWithScores(prefix + date, Double.MinValue, Double.MaxValue)
     //获得的某天的所有的股票的平均值的map集合，key为股票代码，value为平均值
-    val meanValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores("heat_mean_" + meanValue + "_" + date, Double.MinValue, Double.MaxValue))
+    val meanValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores(meanPrefix + "heat_mean_" + meanValue + "_" + date, Double.MinValue, Double.MaxValue))
     //获得的某天的所有股票的标准差的map集合，key为股票代码，value为标准差
-    val standardDeviationValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores("heat_std_" + standardDeviation + "_" + date, Double.MinValue, Double.MaxValue))
+    val standardDeviationValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores(standardDeviationPrefix + "heat_std_" + standardDeviation + "_" + date, Double.MinValue, Double.MaxValue))
 
     val iterator = valuesAndScores.iterator()
 

@@ -19,6 +19,7 @@ object JedisTest extends App {
   val count = jedis.zcard("heat_2016-07-21")
   val result = jedis.zrangeWithScores("heat_2016-07-21", 0, -1)
   val iterator = result.iterator()
+  println("zscore:" + jedis.zscore("heat_mean_10_2016-04-30", "600205"))
 
   val map = mutable.Map[String, Int]()
 

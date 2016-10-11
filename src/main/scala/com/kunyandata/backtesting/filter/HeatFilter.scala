@@ -22,9 +22,9 @@ class HeatFilter private(prefix: String, code: String, start: Int, end: Int, hea
 
       val date = CommonUtil.getDateStr(i)
       val key = prefix + date
-      val value = jedis.zrank(key, code)
+      val value = jedis.zscore(key, code)
 
-      if (value > heatStandard){
+      if (value != null && value > heatStandard) {
         resultList += (date + "," + value)
       }
 

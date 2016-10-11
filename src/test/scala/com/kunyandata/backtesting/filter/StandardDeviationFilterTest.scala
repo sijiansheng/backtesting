@@ -15,7 +15,7 @@ class StandardDeviationFilterTest extends FlatSpec with Matchers {
 
   it should "return a result that is equal the redis data" in {
 
-    val path = "e://backtest/config.xml"
+    val path = ""
 
     val config = Configuration.getConfigurations(path)
     val redisMap = config._1

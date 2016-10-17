@@ -177,7 +177,6 @@ object Scheduler {
               filters += StandardDeviationFilter(prefix, values(0).toDouble, values(1).toInt, values(2).toInt, startOffset)
             } else {
               filters += VariousDateStandardDeviationFilter(prefix, values(0).toDouble, values(1).toInt, values(2).toInt, startOffset, endOffset)
-              //              wrongOption += ",查询标准差的起始日期必须与结束日期相同"
             }
           case _ =>
             println("unknown")

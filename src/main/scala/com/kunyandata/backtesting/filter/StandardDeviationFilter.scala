@@ -4,9 +4,10 @@ import java.util.concurrent.{Callable, FutureTask}
 
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil
-import redis.clients.jedis.Tuple
+import redis.clients.jedis.{Jedis, Tuple}
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
   * Created by sijiansheng on 2016/9/21.
@@ -22,8 +23,34 @@ class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: 
 
   override def filter(): List[String] = {
 
-    var resultSet = mutable.Set[String]()
     val jedis = RedisHandler.getInstance().getJedis
+    val resultSet = StandardDeviationFilterUtil.getStcok(prefix, ratio, meanValue, standardDeviation, jedis, day)
+    jedis.close()
+
+    resultSet.toList
+  }
+
+}
+
+object StandardDeviationFilter {
+
+  def apply(prefix: String, multiple: Double, meanCriterion: Int, stdCriterion: Int, day: Int): StandardDeviationFilter = {
+
+    val filter = new StandardDeviationFilter(prefix, multiple, meanCriterion, stdCriterion, day: Int)
+
+    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
+      override def call(): List[String] = filter.filter()
+    })
+
+    filter
+  }
+}
+
+object StandardDeviationFilterUtil {
+
+  def getStcok(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, jedis: Jedis, day: Int): mutable.Set[String] = {
+
+    var resultSet = mutable.Set[String]()
     var meanPrefix = ""
     var standardDeviationPrefix = ""
 
@@ -60,8 +87,7 @@ class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: 
 
     }
 
-    jedis.close()
-    resultSet.toList
+    resultSet
   }
 
   def valueAndScoreToMap(set: java.util.Set[Tuple]): mutable.Map[String, Double] = {
@@ -75,20 +101,5 @@ class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: 
     }
 
     resultMap
-  }
-
-}
-
-object StandardDeviationFilter {
-
-  def apply(prefix: String, multiple: Double, meanCriterion: Int, stdCriterion: Int, day: Int): StandardDeviationFilter = {
-
-    val filter = new StandardDeviationFilter(prefix, multiple, meanCriterion, stdCriterion, day: Int)
-
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
-    })
-
-    filter
   }
 }

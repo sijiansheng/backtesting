@@ -32,7 +32,7 @@ class StandardDeviationFilterTest extends FlatSpec with Matchers {
       stdPrefix = "industry_"
     }
 
-    val offset = -6
+    val offset = -10
     val multiple = 3
     val cirterions = List(7, 10, 14, 15)
 

@@ -15,7 +15,7 @@ class VariousDateStandardDeviationFilterTest extends FlatSpec with Matchers {
 
   it should "return a result that is equal the redis data" in {
 
-    val path = "E://backtest/config.xml"
+    val path = ""
 
     val config = Configuration.getConfigurations(path)
     val redisMap = config._1
@@ -32,7 +32,7 @@ class VariousDateStandardDeviationFilterTest extends FlatSpec with Matchers {
     }
 
     val startOffset = -50
-    val endOffset = -6
+    val endOffset = -9
     val multiple = 2
     val cirterions = List(7, 10, 14, 15)
 

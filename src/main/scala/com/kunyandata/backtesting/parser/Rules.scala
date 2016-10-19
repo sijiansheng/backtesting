@@ -109,7 +109,7 @@ object Rules {
     result(0) <= result(1) match {
 
       case true => s"${result.mkString(",")}"
-      case false => "error:数值大小关系错误"
+      case false => "error:日期数值大小关系错误"
     }
   }
 

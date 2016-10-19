@@ -13,7 +13,7 @@ object Rules {
   def getNumbers(query: String): Array[String] = {
 
     val temp = query
-      .replaceAll("[^\\-\\.0-9万亿]", " ")
+      .replaceAll("[^\\-\\.0-9万亿\\:]", " ")
       .trim.split(" ")
 
     temp.filter(x => x.length > 0 && x.replaceAll("[万亿]", "").length > 0)
@@ -95,6 +95,16 @@ object Rules {
 
       case _ =>  "error:条件数值个数错误"
     }
+  }
+
+  /**
+    * 处理时间字符串
+    * @param number 时间字符串
+    * @return
+    */
+  def date(number: String) = {
+
+    number.replaceAll("[\\-\\:]", "")
   }
 
   /**
@@ -213,6 +223,9 @@ object Rules {
       case "收益率大于x%小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       case "日均查看热度离均差大于x倍前x天日均热度标准差" => (210, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+      case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" => (211, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+      case "x到x之间的查看热度大于x倍前x天日均热度标准差" =>
+        (212, s"${date(queryNumbers(0))},${date(queryNumbers(1))},${queryNumbers(2)},${queryNumbers(3)},${queryNumbers(3)}")
 
       case "资金流入大于x" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x" => (301, smaller(queryNumbers(0)))

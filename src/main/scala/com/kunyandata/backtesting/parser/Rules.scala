@@ -102,9 +102,15 @@ object Rules {
     * @param number 时间字符串
     * @return
     */
-  def date(number: String) = {
+  def date(number: Array[String]) = {
 
-    number.replaceAll("[\\-\\:]", "")
+    val result = number.map(_.replaceAll("[\\-\\:]", ""))
+
+    result(0) <= result(1) match {
+
+      case true => s"${result.mkString(",")}"
+      case false => "error:数值大小关系错误"
+    }
   }
 
   /**
@@ -115,15 +121,12 @@ object Rules {
   def template(query: String): (Int, String) = {
 
     val queryNumbers = getNumbers(query)
-    println(queryNumbers.toSeq)
     var queryTemplate: String = query
 
     queryNumbers.foreach(num => {
 
       queryTemplate = queryTemplate.replaceFirst(num, "x")
     })
-
-    println(queryTemplate)
 
     val resultTemp = queryTemplate match {
 
@@ -222,10 +225,12 @@ object Rules {
       case "收益率等于x%" => (209, equel(queryNumbers(0)))
       case "收益率大于x%小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
-      case "日均查看热度离均差大于x倍前x天日均热度标准差" => (210, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
-      case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" => (211, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+      case "日均查看热度离均差大于x倍前x天日均热度标准差" =>
+        (210, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+      case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" =>
+        (211, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
       case "x到x之间的查看热度大于x倍前x天日均热度标准差" =>
-        (212, s"${date(queryNumbers(0))},${date(queryNumbers(1))},${queryNumbers(2)},${queryNumbers(3)},${queryNumbers(3)}")
+        (212, s"${date(queryNumbers.slice(0, 2))},${queryNumbers(2)},${queryNumbers(3)},${queryNumbers(3)}")
 
       case "资金流入大于x" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x" => (301, smaller(queryNumbers(0)))

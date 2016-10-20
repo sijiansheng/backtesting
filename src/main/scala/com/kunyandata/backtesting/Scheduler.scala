@@ -50,7 +50,6 @@ object Scheduler {
 
           val beginTime = System.currentTimeMillis()
           val message = new String(it.next().message())
-          BKLogger.error(message)
           val jsonValue = Json.parse(message)
 
           val uid = (jsonValue \ "uid").as[Long]
@@ -98,7 +97,7 @@ object Scheduler {
 
           val sendMessage = Json.stringify(resultValue)
 
-          BKLogger.error(s"SendMessage:$sendMessage")
+          BKLogger.warn(message)
           producerHandler.sendMessage(sendMessage)
 
         } catch {

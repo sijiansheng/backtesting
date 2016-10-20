@@ -2,7 +2,6 @@ package com.kunyandata.backtesting.parser
 
 import com.kunyandata.backtesting.util.CommonUtil
 
-
 /**
   * Created by QQ on 2016/8/30.
   */
@@ -113,7 +112,7 @@ object Rules {
 
       case true => result(1) - result(0) <= 47L * 60 * 60 * 1000 match {
 
-        case true => s"${number.map(_.replaceAll("[\\-\\:]", "")).mkString(",")}"
+        case true => s"${result(0)},${result(1)}"
         case false => "error:日期跨度时间超过47小时"
       }
 

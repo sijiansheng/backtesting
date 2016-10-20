@@ -43,10 +43,11 @@ object CommonUtil {
     * 获取给定时间字符串的时间戳
     * @param dateString 制定的时间字符串
     * @return 毫秒级的时间戳
+    * @author QiuQiu
     */
   def getDateTimeStamp(dateString: String): Long = {
 
-    new SimpleDateFormat(s"$DATE_FORMAT:HH").parse(dateString).getTime
+    new SimpleDateFormat("yyyy-M-d-H").parse(dateString).getTime
   }
 
   /**

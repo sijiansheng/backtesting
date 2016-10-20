@@ -1,5 +1,8 @@
 package com.kunyandata.backtesting.parser
 
+import com.kunyandata.backtesting.util.CommonUtil
+
+
 /**
   * Created by QQ on 2016/8/30.
   */
@@ -13,7 +16,7 @@ object Rules {
   def getNumbers(query: String): Array[String] = {
 
     val temp = query
-      .replaceAll("[^\\-\\.0-9万亿]", " ")
+      .replaceAll("[^\\-\\.0-9万亿\\:]", " ")
       .trim.split(" ")
 
     temp.filter(x => x.length > 0 && x.replaceAll("[万亿]", "").length > 0)
@@ -98,6 +101,27 @@ object Rules {
   }
 
   /**
+    * 处理时间字符串
+    * @param number 时间字符串
+    * @return
+    */
+  def dateProcess(number: Array[String]) = {
+
+    val result = number.map(CommonUtil.getDateTimeStamp)
+
+    result(0) <= result(1) match {
+
+      case true => result(1) - result(0) <= 47L * 60 * 60 * 1000 match {
+
+        case true => s"${number.map(_.replaceAll("[\\-\\:]", "")).mkString(",")}"
+        case false => "error:日期跨度时间超过47小时"
+      }
+
+      case false => "error:日期数值大小关系错误"
+    }
+  }
+
+  /**
     * 解析方法
     * @param query 条件语句
     * @return
@@ -105,15 +129,12 @@ object Rules {
   def template(query: String): (Int, String) = {
 
     val queryNumbers = getNumbers(query)
-    println(queryNumbers.toSeq)
     var queryTemplate: String = query
 
     queryNumbers.foreach(num => {
 
       queryTemplate = queryTemplate.replaceFirst(num, "x")
     })
-
-    println(queryTemplate)
 
     val resultTemp = queryTemplate match {
 
@@ -212,7 +233,12 @@ object Rules {
       case "收益率等于x%" => (209, equel(queryNumbers(0)))
       case "收益率大于x%小于x%" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
-      case "日均查看热度离均差大于x倍前x天日均热度标准差" => (210, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+      case "日均查看热度离均差大于x倍前x天日均热度标准差" =>
+        (210, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+      case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" =>
+        (211, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+      case "x到x之间的查看热度大于x倍前x天日均热度标准差" =>
+        (212, s"${dateProcess(queryNumbers.slice(0, 2))},${queryNumbers(2)},${queryNumbers(3)},${queryNumbers(3)}")
 
       case "资金流入大于x" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x" => (301, smaller(queryNumbers(0)))

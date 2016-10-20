@@ -39,6 +39,15 @@ object CommonUtil {
     new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
   }
 
+  /**
+    * 获取给定时间字符串的时间戳
+    * @param dateString 制定的时间字符串
+    * @return 毫秒级的时间戳
+    */
+  def getDateTimeStamp(dateString: String): Long = {
+
+    new SimpleDateFormat(s"$DATE_FORMAT:HH").parse(dateString).getTime
+  }
 
   /**
     * 获得给定字符串所代表的日期与当日的偏差值

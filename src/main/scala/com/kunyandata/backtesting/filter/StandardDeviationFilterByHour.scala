@@ -86,10 +86,7 @@ object StandardDeviationFilterByHour {
 
   def getDateWithHourStringByTimestamp(timestamp: Long): String = new SimpleDateFormat("yyyy-MM-dd-HH").format(timestamp)
 
-  def getRedisKey(startTime: Long, endTime: Long): List[String] = {
-
-    getAllHourByStartAndEnd(startTime, endTime).map("count_heat_hour_" + _)
-  }
+  def getRedisKey(startTime: Long, endTime: Long): List[String] = getAllHourByStartAndEnd(startTime, endTime).map("count_heat_hour_" + _)
 
   /**
     * 从redis中得到股票和该股票在redis所有key的热度的和值

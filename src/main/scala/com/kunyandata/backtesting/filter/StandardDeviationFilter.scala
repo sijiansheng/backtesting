@@ -121,6 +121,7 @@ object StandardDeviationFilterUtil {
     }
 
     conditionHeat.foreach(stockAndHeat => {
+
       val stock = stockAndHeat._1
       val score = stockAndHeat._2
       val meanScore = meanValuesAndScoresMap.getOrElse(stock, Double.MaxValue)

@@ -10,9 +10,9 @@ import org.scalatest.{Matchers, FlatSpec}
   */
 class StandardDeviationFilterByHourTest extends FlatSpec with Matchers {
 
-  it should "return a result that is equal the redis data" in {
+  it should "return a result and println" in {
 
-    val path = "e://backtest/config.xml"
+    val path = ""
 
     val config = Configuration.getConfigurations(path)
     val redisMap = config._1
@@ -28,7 +28,7 @@ class StandardDeviationFilterByHourTest extends FlatSpec with Matchers {
 
       val meanCriterion = cirterion
       val stdCriterion = cirterion
-      val result = StandardDeviationFilterByHour(prefix, multiple, meanCriterion,stdCriterion, 1476806400000L, 1476892800000L, 10, 10).filter()
+      val result = StandardDeviationFilterByHour(prefix, multiple, meanCriterion, stdCriterion, 1476806400000L, 1476892800000L, 10, 10).filter()
 
       for (code <- result) {
         println(code)

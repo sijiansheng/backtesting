@@ -21,7 +21,7 @@ import scala.collection.mutable.ListBuffer
   * @param startDateWithHour 查询的起始日期和小时
   * @param endDateWithHour   查询的结束日期和小时
   */
-class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, startDateWithHour: String, endDateWithHour: String, startDay: Int, endDay: Int) extends Filter {
+class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, startDateWithHour: Long, endDateWithHour: Long, startDay: Int, endDay: Int) extends Filter {
 
   override def filter(): List[String] = {
 
@@ -53,7 +53,7 @@ class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanV
 
 object StandardDeviationFilterByHour {
 
-  def apply(prefix: String, multiple: Double, meanCriterion: Int, stdCriterion: Int, startDateWithHour: String, endDateWithHour: String, startDay: Int, endDay: Int): StandardDeviationFilterByHour = {
+  def apply(prefix: String, multiple: Double, meanCriterion: Int, stdCriterion: Int, startDateWithHour: Long, endDateWithHour: Long, startDay: Int, endDay: Int): StandardDeviationFilterByHour = {
 
     val filter = new StandardDeviationFilterByHour(prefix, multiple, meanCriterion, stdCriterion, startDateWithHour, endDateWithHour, startDay, endDay)
 
@@ -67,14 +67,12 @@ object StandardDeviationFilterByHour {
   /**
     * 根据起止的日期小时得到中间所有的日期和时间间隔
     *
-    * @param startTime 开始时间 格式为yyyyMMddHH 如：2010年10月10日10点 2010101010
-    * @param endTime   结束时间 格式同上
+    * @param startTimestamp 开始时间戳
+    * @param endTimestamp   结束时间 格式同上
     * @return 返回时间间隔内的所有小时 如：开始时间为2010101008  结束时间为2010101010  则返回的结果时List("2010101008","2010101009","2010101010")
     */
-  def getAllHourByStartAndEnd(startTime: String, endTime: String): List[String] = {
+  def getAllHourByStartAndEnd(startTimestamp: Long, endTimestamp: Long): List[String] = {
 
-    val startTimestamp = getTimestampByDateWithHour(startTime)
-    val endTimestamp = getTimestampByDateWithHour(endTime)
     val result = ListBuffer[String]()
 
     for (time <- (startTimestamp / 1000 / 60 / 60) to (endTimestamp / 1000 / 60 / 60)) {
@@ -88,7 +86,7 @@ object StandardDeviationFilterByHour {
 
   def getDateWithHourStringByTimestamp(timestamp: Long): String = new SimpleDateFormat("yyyy-MM-dd-HH").format(timestamp)
 
-  def getRedisKey(startTime: String, endTime: String): List[String] = {
+  def getRedisKey(startTime: Long, endTime: Long): List[String] = {
 
     getAllHourByStartAndEnd(startTime, endTime).map("count_heat_hour_" + _)
   }

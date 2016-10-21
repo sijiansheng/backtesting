@@ -98,6 +98,7 @@ object Scheduler {
           val sendMessage = Json.stringify(resultValue)
 
           BKLogger.warn(message)
+          BKLogger.warn(sendMessage)
           producerHandler.sendMessage(sendMessage)
 
         } catch {
@@ -178,7 +179,7 @@ object Scheduler {
               filters += VariousDateStandardDeviationFilter(prefix, values(0).toDouble, values(1).toInt, values(2).toInt, startOffset, endOffset)
             }
           case "hour_standard_deviation" =>
-            filters += StandardDeviationFilterByHour(prefix, values(2).toDouble, values(3).toInt, values(4).toInt, values(0), values(1), startOffset, endOffset)
+            filters += StandardDeviationFilterByHour(prefix, values(2).toDouble, values(3).toInt, values(4).toInt, values(0).toLong, values(1).toLong, startOffset, endOffset)
           case _ =>
             println("unknown")
         }

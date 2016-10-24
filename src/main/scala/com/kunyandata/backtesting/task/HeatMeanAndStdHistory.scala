@@ -1,52 +1,52 @@
 package com.kunyandata.backtesting.task
-import java.text.SimpleDateFormat
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.logger.BKLogger
+import com.kunyandata.backtesting.util.CommonUtil
+import redis.clients.jedis.Jedis
 import scala.collection.mutable
 
 /**
-  * 计算指定日期或昨日的历史热度均值和标准差
-  * Created by dcyang on 2016/9/22 0022.
+  * Created by dcyang on 2016/10/21 0021.
+  * 跑历史数据的股票热度均值、方差
   */
-object HeatMeanAndStdOneDay {
+object HeatMeanAndStdHistory {
 
   def main(args: Array[String]) {
 
-    // 初始化jedis
+    // 初始化Jedis
     val host = args(0)
     val port = args(1).toInt
     val auth = args(2)
     val db = args(3).toInt
     RedisHandler.init(host, port, auth, db)
-    val jedis = RedisHandler.getInstance().getJedis
+    val jedis: Jedis = RedisHandler.getInstance().getJedis
 
-    // 指定日期或者取昨天日期（用于定时任务）
-    val date = if (args.length == 4) {
+    // 指定开始日期(eg: "2016-02-10")
+    val initData = args(4)
 
-      // 获取前一天时间
-      val DATE_FORMAT = "yyyy-MM-dd"
-      val timeStamp = System.currentTimeMillis() - 24l * 60 * 60 * 1000
+    // 指定需要计算均值方差的的时间跨度（eg: 5、7、10）
+    val offDay = args(5).toInt
 
-      new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
-    } else args(4)
-
-    // 指定需要计算的时间跨度
-    val offDays = List(5, 7, 10, 14, 15, 20, 30, 60)
+    // 需要计算的历史天数
+    val endDate = CommonUtil.getDateStr("2016-01-06", offDay)
+    val dayNums = CommonUtil.getOffset(initData, endDate)
 
     try{
 
-      val prefix = "count_heat_"
-      val key = prefix + date
-      val stockNum = jedis.zcard(key)
+      for(i <- 0 to dayNums){
 
-      if (stockNum !=0){
+        // 计算当日日期
+        val date = CommonUtil.getDateStr(initData, -i)
 
-        for (offDay <- offDays){
+        val key = "count_heat_" + date
+        val stockNum = jedis.zcard(key)
+
+        if(stockNum != 0){
 
           // 初始化股票和历史热度数据的Map, Map[股票代码， Array[历史热度]]
           val initialMap = HistoryHeatDataProcess.initCodeHeatArrayMap(date, jedis)
 
-          //  获取offDay（eg: 5）个有效的历史日期
+          // 获取offDay（eg: 5）个有效的历史日期
           val preDates = HistoryHeatDataProcess.getPreDates(jedis, date, offDay)
 
           if (preDates.length == offDay){
@@ -64,17 +64,16 @@ object HeatMeanAndStdOneDay {
 
             HistoryHeatDataProcess.meanStdWriteToJedis(codeWithMeanAndStd, jedis, outMeanKey, outStdKey)
 
+            println(date + "\t" + offDay)
           }else{
             BKLogger.info(date + "\t" + offDay + "\t" + "have not sufficient historyData")
           }
 
-          println(date + "\t" + offDay)
+        }else{
+          BKLogger.warn("缺失数据：" + date)
         }
 
-      }else{
-        BKLogger.warn("缺失数据：" + date)
       }
-
 
     }catch {
       case e: Exception => e.printStackTrace()

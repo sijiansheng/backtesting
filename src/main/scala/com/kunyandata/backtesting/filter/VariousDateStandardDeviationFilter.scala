@@ -26,7 +26,7 @@ class VariousDateStandardDeviationFilter private(prefix: String, ratio: Double, 
 
     for (day <- startDay to endDay) {
 
-      val result = StandardDeviationFilterUtil.getStcok(prefix, ratio, meanValue, standardDeviation, jedis, day)
+      val result = StandardDeviationFilterUtil.getStock(prefix, ratio, meanValue, standardDeviation, jedis, day)
 
       result.foreach(stock => {
 

@@ -38,31 +38,39 @@ object HeatMeanAndStdHistory {
         // 计算当日日期
         val date = CommonUtil.getDateStr(initData, -i)
 
-        // 初始化股票和历史热度数据的Map, Map[股票代码， Array[历史热度]]
-        val initialMap = HistoryHeatDataProcess.initCodeHeatArrayMap(date, jedis)
+        val key = "count_heat_" + date
+        val stockNum = jedis.zcard(key)
 
-        // 获取offDay（eg: 5）个有效的历史日期
-        val preDates = HistoryHeatDataProcess.getPreDates(jedis, date, offDay)
+        if(stockNum != 0){
 
-        if (preDates.length == offDay){
+          // 初始化股票和历史热度数据的Map, Map[股票代码， Array[历史热度]]
+          val initialMap = HistoryHeatDataProcess.initCodeHeatArrayMap(date, jedis)
 
-          // 获取股票和历史热度数据的Map, Map[股票代码， Array[历史热度]]
-          val codeHistoryHeatMap = HistoryHeatDataProcess.getCodeHeatArrayMap(jedis, preDates, initialMap)
+          // 获取offDay（eg: 5）个有效的历史日期
+          val preDates = HistoryHeatDataProcess.getPreDates(jedis, date, offDay)
 
+          if (preDates.length == offDay){
 
-          // 根据历史热度数据计算均值、方差
-          val codeWithMeanAndStd: mutable.Map[String, (Double, Double)] = codeHistoryHeatMap.map(x =>
-            (x._1, HistoryHeatDataProcess.getMeanAndStd(x._2)))
+            // 获取股票和历史热度数据的Map, Map[股票代码， Array[历史热度]]
+            val codeHistoryHeatMap = HistoryHeatDataProcess.getCodeHeatArrayMap(jedis, preDates, initialMap)
 
-          // 写入redis
-          val outMeanKey = "heat_mean_" + offDay + "_" + date
-          val outStdKey = "heat_std_" + offDay + "_" + date
+            // 根据历史热度数据计算均值、方差
+            val codeWithMeanAndStd: mutable.Map[String, (Double, Double)] = codeHistoryHeatMap.map(x =>
+              (x._1, HistoryHeatDataProcess.getMeanAndStd(x._2)))
 
-          HistoryHeatDataProcess.meanStdWriteToJedis(codeWithMeanAndStd, jedis, outMeanKey, outStdKey)
+            // 写入redis
+            val outMeanKey = "heat_mean_" + offDay + "_" + date
+            val outStdKey = "heat_std_" + offDay + "_" + date
 
-          println(date + "\t" + offDay)
+            HistoryHeatDataProcess.meanStdWriteToJedis(codeWithMeanAndStd, jedis, outMeanKey, outStdKey)
+
+            println(date + "\t" + offDay)
+          }else{
+            BKLogger.info(date + "\t" + offDay + "\t" + "have not sufficient historyData")
+          }
+
         }else{
-          BKLogger.info(date + "\t" + offDay + "\t" + "have not sufficient historyData")
+          BKLogger.warn("缺失数据：" + date)
         }
 
       }

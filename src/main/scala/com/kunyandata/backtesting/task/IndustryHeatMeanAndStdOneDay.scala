@@ -33,43 +33,51 @@ object IndustryHeatMeanAndStdOneDay {
       new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
     } else args(5)
 
-
     // 指定需要计算的时间跨度（如：5天、10天）
     val offDays = List(5, 7, 10, 14, 15, 20, 30, 60)
 
     try {
 
-      for(offDay <- offDays){
+      val prefix = "count_heat_"
+      val key = prefix + date
+      val stockNum = jedis.zcard(key)
 
-        // 初始化行业与历史行业热度的Map，Map[行业， ArrayBuffer[空]]
-        val initialMap = HistoryHeatDataProcess.initIndustryHeatArrayMap(date, jedis, stockIndustryMap)
+      if (stockNum != 0){
 
-        // 获取有效的offDay（如5）个有效日期
-        val preDates = HistoryHeatDataProcess.getPreDates(jedis, date, offDay)
+        for(offDay <- offDays){
 
-        if (preDates.length == offDay){
+          // 初始化行业与历史行业热度的Map，Map[行业， ArrayBuffer[空]]
+          val initialMap = HistoryHeatDataProcess.initIndustryHeatArrayMap(date, jedis, stockIndustryMap)
 
-          // 获取行业与历史行业热度的Map， Map[行业， ArrayBuffer[历史行业热度]]
-          val industryHeatArrayMap =
-            HistoryHeatDataProcess.getIndustryHeatArrayMap(jedis, preDates, initialMap, stockIndustryMap)
+          // 获取有效的offDay（如5）个有效日期
+          val preDates = HistoryHeatDataProcess.getPreDates(jedis, date, offDay)
 
-          // 计算均值方差
-          val industryWithMeanAndStd = industryHeatArrayMap
-            .map(x => (x._1, HistoryHeatDataProcess.getMeanAndStd(x._2)))
+          if (preDates.length == offDay){
 
-          // 写入redis
-          val outMeanKey = "industry_heat_mean_" + offDay + "_" + date
-          val outStdKey = "industry_heat_std_" + offDay + "_" + date
-          HistoryHeatDataProcess.meanStdWriteToJedis(industryWithMeanAndStd, jedis, outMeanKey, outStdKey)
+            // 获取行业与历史行业热度的Map， Map[行业， ArrayBuffer[历史行业热度]]
+            val industryHeatArrayMap =
+              HistoryHeatDataProcess.getIndustryHeatArrayMap(jedis, preDates, initialMap, stockIndustryMap)
 
-          println(date + "\t" + offDay)
+            // 计算均值方差
+            val industryWithMeanAndStd = industryHeatArrayMap
+              .map(x => (x._1, HistoryHeatDataProcess.getMeanAndStd(x._2)))
 
-        }else{
-          BKLogger.info(date + "\t" + "have not sufficient historyData")
+            // 写入redis
+            val outMeanKey = "industry_heat_mean_" + offDay + "_" + date
+            val outStdKey = "industry_heat_std_" + offDay + "_" + date
+            HistoryHeatDataProcess.meanStdWriteToJedis(industryWithMeanAndStd, jedis, outMeanKey, outStdKey)
+
+            println(date + "\t" + offDay)
+
+          }else{
+            BKLogger.info(date + "\t" + "have not sufficient historyData")
+          }
+
         }
 
+      }else{
+        BKLogger.warn("缺失数据：" + date)
       }
-
 
     }catch {
       case e: Exception => e.printStackTrace()

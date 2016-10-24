@@ -2,6 +2,7 @@ package com.kunyandata.backtesting.task
 import java.text.SimpleDateFormat
 import java.util
 import com.kunyandata.backtesting.io.RedisHandler
+import com.kunyandata.backtesting.logger.BKLogger
 import redis.clients.jedis.Tuple
 import scala.collection.mutable
 
@@ -38,14 +39,12 @@ object IndustryHeatOneDay {
       new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
     } else args(5)
 
-
     val key = prefix + date
 
     val start = Int.MinValue
     val end = Int.MaxValue
 
     try {
-
 
       val codesWithScores: util.Set[Tuple] = jedis.zrangeWithScores(key, start, end)
 
@@ -71,6 +70,8 @@ object IndustryHeatOneDay {
           })
         }
         println(outKey)
+      }else{
+        BKLogger.warn("缺失数据：" + date)
       }
 
     }catch {

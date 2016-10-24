@@ -1,6 +1,7 @@
 package com.kunyandata.backtesting.task
 import java.util
 import com.kunyandata.backtesting.io.RedisHandler
+import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.util.CommonUtil
 import redis.clients.jedis.Tuple
 import scala.collection.mutable
@@ -65,6 +66,9 @@ object IndustryHeatHistory {
             })
           }
           println(outKey)
+
+        }else{
+          BKLogger.warn("缺失数据：" + date)
         }
       }
     }catch {

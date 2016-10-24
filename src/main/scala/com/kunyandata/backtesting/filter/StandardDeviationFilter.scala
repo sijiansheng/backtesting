@@ -26,7 +26,7 @@ class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: 
   override def filter(): List[String] = {
 
     val jedis = RedisHandler.getInstance().getJedis
-    val resultSet = StandardDeviationFilterUtil.getStcok(prefix, ratio, meanValue, standardDeviation, jedis, day)
+    val resultSet = StandardDeviationFilterUtil.getStock(prefix, ratio, meanValue, standardDeviation, jedis, day)
     jedis.close()
 
     resultSet.toList
@@ -50,7 +50,7 @@ object StandardDeviationFilter {
 
 object StandardDeviationFilterUtil {
 
-  def getStcok(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, jedis: Jedis, day: Int): mutable.Set[String] = {
+  def getStock(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, jedis: Jedis, day: Int): mutable.Set[String] = {
 
     var meanPrefix = ""
     var standardDeviationPrefix = ""
@@ -65,7 +65,6 @@ object StandardDeviationFilterUtil {
     val valuesAndScores = valueAndScoreToMap(jedis.zrangeByScoreWithScores(prefix + date, Double.MinValue, Double.MaxValue))
 
     val resultSet = compareHeat(ratio, valuesAndScores, jedis, meanPrefix, meanValue, standardDeviationPrefix, standardDeviation, date)
-    jedis.close()
 
     resultSet
   }

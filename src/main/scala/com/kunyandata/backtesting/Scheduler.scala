@@ -117,7 +117,7 @@ object Scheduler {
 
   def filter(queryMap: Map[Int, String], startDate: String, endDate: String): (mutable.ListBuffer[String], String) = {
 
-    var wrongOption = queryMap.getOrElse(-1, "")
+    val wrongOption = queryMap.getOrElse(-1, "")
     val startOffset = CommonUtil.getOffset(startDate)
     val endOffset = CommonUtil.getOffset(endDate)
 
@@ -163,7 +163,7 @@ object Scheduler {
           case "conti_value" =>
             filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
           case "conti_rank" =>
-            filters += ContiRankFilter(prefix, values(0).toInt, values(1).toInt, startOffset, endOffset)
+            filters += ContiRankFilter(prefix, values(0).toInt, values(2).toInt, startOffset, endOffset)
           case "single_value" =>
             filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
           case "sum_value" =>

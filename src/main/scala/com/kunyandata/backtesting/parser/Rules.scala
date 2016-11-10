@@ -1,4 +1,4 @@
-package com.kunyandata.backtesting.parser
+package tools.parser
 
 import com.kunyandata.backtesting.util.CommonUtil
 
@@ -133,13 +133,11 @@ object Rules {
     val queryNumbers = getNumbers(query)
     var queryTemplate: String = query
 
-    println(queryNumbers.toSeq)
     queryNumbers.foreach(num => {
 
       queryTemplate = queryTemplate.replaceFirst(num, "x")
     })
 
-    println(queryTemplate)
     val resultTemp = queryTemplate match {
 
       // 基本面数据
@@ -238,11 +236,11 @@ object Rules {
       case "收益率大于x小于x" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
       case "日均查看热度离均差大于x倍前x天日均热度标准差" =>
-        (210, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+        (210, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
       case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" =>
-        (211, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
+        (211, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
       case "x到x之间的查看热度大于x倍前x天日均热度标准差" =>
-        (212, s"${dateProcess(queryNumbers.slice(0, 2))},${queryNumbers(2)},${queryNumbers(3)},${queryNumbers(3)}")
+        (212, s"${dateProcess(queryNumbers.slice(0, 2))},${queryNumbers(2)},${equel(queryNumbers(3))}")
 
       case "资金流入大于x" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x" => (301, smaller(queryNumbers(0)))
@@ -270,6 +268,11 @@ object Rules {
       case "新闻访问热度每年等于x次" => (8401, equel(queryNumbers(0)))
       case "新闻访问热度每年大于x次小于x次" => (8401, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
+      case "新闻访问热度每小时大于x次" => (1401, bigger(queryNumbers(0)))
+      case "新闻访问热度每小时小于x次" => (1401, smaller(queryNumbers(0)))
+      case "新闻访问热度每小时等于x次" => (1401, equel(queryNumbers(0)))
+      case "新闻访问热度每小时大于x次小于x次" => (1401, biggerAndSmaller(queryNumbers.slice(0, 2)))
+
       case "新闻转载热度每天大于x次" => (402, bigger(queryNumbers(0)))
       case "新闻转载热度每天小于x次" => (402, smaller(queryNumbers(0)))
       case "新闻转载热度每天等于x次" => (402, equel(queryNumbers(0)))
@@ -290,13 +293,22 @@ object Rules {
       case "新闻转载热度每年等于x次" => (8402, equel(queryNumbers(0)))
       case "新闻转载热度每年大于x次小于x次" => (8402, biggerAndSmaller(queryNumbers.slice(0, 2)))
 
+      case "新闻转载热度每小时大于x次" => (1402, bigger(queryNumbers(0)))
+      case "新闻转载热度每小时小于x次" => (1402, smaller(queryNumbers(0)))
+      case "新闻转载热度每小时等于x次" => (1402, equel(queryNumbers(0)))
+      case "新闻转载热度每小时大于x次小于x次" => (1402, biggerAndSmaller(queryNumbers.slice(0, 2)))
+
       //公告性事件
       case "盈利预增x次" => (50001, equel(queryNumbers(0)))
       case "诉讼仲裁x次" => (50002, equel(queryNumbers(0)))
       case "违规处罚x次" => (50003, equel(queryNumbers(0)))
       case "盈利预增x次以上" => (50001, bigger(queryNumbers(0)))
+      case "盈利预增x次以下" => (50001, smaller(queryNumbers(0)))
       case "诉讼仲裁x次以上" => (50002, bigger(queryNumbers(0)))
+      case "诉讼仲裁x次以下" => (50002, smaller(queryNumbers(0)))
       case "违规处罚x次以上" => (50003, bigger(queryNumbers(0)))
+      case "违规处罚x次以下" => (50003, smaller(queryNumbers(0)))
+
 
       //新闻趋势
       case "新闻趋势连续x天上涨" => (10001, s"${queryNumbers(0)},1,1")
@@ -311,29 +323,49 @@ object Rules {
       case "新闻情感连续x天以上都是负面情绪" => (10004, s"${queryNumbers(0)},0.5,1")
 
       //大V观点
-      case "连续x天被x个大V看好" => (15001, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
-      case "连续x天被x个大V看空" => (15002, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
-      case "连续x天以上被x个大V看好" => (15001, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
-      case "连续x天以上被x个大V看空" => (15002, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(1)}")
-      case "连续x天被x个大V以上看好" => (15001, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
-      case "连续x天被x个大V以上看空" => (15002, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
-      case "连续x~x天被x个大V看好" => (15001, s"${queryNumbers(0)},${queryNumbers(2)},${queryNumbers(2)}")
-      case "连续x~x天被x个大V看空" => (15002, s"${queryNumbers(0)},${queryNumbers(2)},${queryNumbers(2)}")
-      case "连续x天被x~x个大V看好" => (15001, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(2)}")
-      case "连续x天被x~x个大V看空" => (15002, s"${queryNumbers(0)},${queryNumbers(1)},${queryNumbers(2)}")
+      case "连续x天被x个大V看好" => (15001, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "连续x天被x个大V看空" => (15002, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "连续x天以上被x个大V看好" => (15001, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "连续x天以上被x个大V看空" => (15002, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "连续x天被x个大V以上看好" => (15001, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "连续x天被x个大V以上看空" => (15002, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "连续x~x天被x个大V看好" => (15001, s"${queryNumbers(0)},${equel(queryNumbers(2))}")
+      case "连续x~x天被x个大V看空" => (15002, s"${queryNumbers(0)},${equel(queryNumbers(2))}")
+      case "连续x天被x~x个大V看好" => (15001, s"${queryNumbers(0)},${biggerAndSmaller(queryNumbers.slice(1, 3))}")
+      case "连续x天被x~x个大V看空" => (15002, s"${queryNumbers(0)},${biggerAndSmaller(queryNumbers.slice(1, 3))}")
 
       //行为数据
-      case "查看热度连续x天上涨超过x" => (15003, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
+      case "查看热度连续x天上涨等于x" => (15003, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x天上涨超过x" => (15003, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x天上涨未超过x" => (15003, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
+
       case "查看热度连续x天出现在topx" => (15004, s"${queryNumbers(0)},1,${queryNumbers(1)}")
-      case "查看热度连续x天以上上涨超过x" => (15003, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
+      case "查看热度连续x天未出现在topx" => (15004, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x天出现在topx~x" => (15004, s"${queryNumbers(0)},${biggerAndSmaller(queryNumbers.slice(1, 3))}")
+      case "查看热度连续x天未出现在topx~x" => (15014, s"${queryNumbers(0)},1,${queryNumbers(1)},${bigger(queryNumbers(2))}")
+
+      case "查看热度连续x天以上上涨等于x" => (15003, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x天以上上涨超过x" => (15003, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x天以上上涨未超过x" => (15003, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
+
       case "查看热度连续x天以上出现在topx" => (15004, s"${queryNumbers(0)},1,${queryNumbers(1)}")
-      case "查看热度连续x天超过x" => (15005, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
-      case "查看热度连续x天以上超过x" => (15005, s"${queryNumbers(0)},${queryNumbers(1)},${Int.MaxValue}")
+      case "查看热度连续x天以上未出现在topx" => (15004, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x天以上出现在topx~x" => (15004, s"${queryNumbers(0)},${biggerAndSmaller(queryNumbers.slice(1, 3))}")
+      case "查看热度连续x天以上未出现在topx~x" => (15014, s"${queryNumbers(0)},1,${queryNumbers(1)},${bigger(queryNumbers(2))}")
+
+      case "查看热度连续x天等于x" => (15005, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x天超过x" => (15005, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x天未超过x" => (15005, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
+
+      case "查看热度连续x天以上等于x" => (15005, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x天以上超过x" => (15005, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x天以上未超过x" => (15005, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
+
 
       case _ => (-1, query)
     }
 
-    resultTemp._2.startsWith("error:") match {
+    resultTemp._2.contains("error:") match {
 
       case true => (-1, query)
       case _ => resultTemp

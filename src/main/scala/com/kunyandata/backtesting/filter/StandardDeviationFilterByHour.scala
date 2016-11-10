@@ -17,8 +17,6 @@ import scala.collection.mutable.ListBuffer
   * @param ratio             比率 倍数即标准差的乘数
   * @param meanValue         平均值标准 7 14 30等即7天平均值 14天平均值 30天平均值
   * @param standardDeviation 标准差标准 7，14 30同上
-  * @param startDay          起始日期 没用到
-  * @param endDay            结束日期 没用到
   * @param startDateWithHour 查询的起始日期和小时
   * @param endDateWithHour   查询的结束日期和小时
   */

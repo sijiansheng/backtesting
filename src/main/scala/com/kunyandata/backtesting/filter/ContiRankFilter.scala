@@ -12,14 +12,9 @@ import scala.collection.mutable
   * Created by YangShuai
   * Created on 2016/8/24.
   */
-class ContiRankFilter private(prefix: String, days: Int, start: Int, end: Int, endRank1: Int, startRank1: Int = 0, startRank2: Int = 0, endRank2: Int = 0) extends Filter {
+class ContiRankFilter private(prefix: String, days: Int, start: Int, end: Int, endRank1: Int, startRank1: Int, endRank2: Int, startRank2: Int) extends Filter {
 
   override def filter(): List[String] = {
-
-    getRank(prefix, days, start, end, endRank1, startRank1, startRank2, endRank2)
-  }
-
-  def getRank(prefix: String, days: Int, start: Int, end: Int, endRank1: Int, startRank1: Int = 0, startRank2: Int = 0, endRank2: Int = 0): List[String] = {
 
     val resultSet = mutable.Set[String]()
     val map = mutable.Map[String, Int]()
@@ -31,7 +26,7 @@ class ContiRankFilter private(prefix: String, days: Int, start: Int, end: Int, e
 
       val stocks = jedis.zrevrange(key, 0, -1).toArray()
 
-      val result = stocks.slice(startRank1, endRank1) ++ stocks.slice(startRank2, endRank2)
+      val result = stocks.slice(startRank1 - 1, endRank1 - 1) ++ stocks.slice(startRank2 - 1, endRank2 - 1)
 
       map.foreach(x => {
 
@@ -41,7 +36,6 @@ class ContiRankFilter private(prefix: String, days: Int, start: Int, end: Int, e
           map.remove(key)
 
       })
-
 
       result.foreach(x => {
 
@@ -59,13 +53,14 @@ class ContiRankFilter private(prefix: String, days: Int, start: Int, end: Int, e
 
     resultSet.toList
   }
+
 }
 
 object ContiRankFilter {
 
-  def apply(prefix: String, days: Int, start: Int, end: Int, rank: Int): ContiRankFilter = {
+  def apply(prefix: String, days: Int, start: Int, end: Int, endRank1: Int, startRank1: Int, endRank2: Int = 1, startRank2: Int = 1): ContiRankFilter = {
 
-    val filter = new ContiRankFilter(prefix, days, start, end, rank)
+    val filter = new ContiRankFilter(prefix, days, start, end, endRank1, startRank1, endRank2, startRank2)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

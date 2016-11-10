@@ -25,7 +25,7 @@ class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanV
   override def filter(): List[String] = {
 
     val jedis = RedisHandler.getInstance().getJedis
-    val redisKeys = HourUtil.getRedisKey(startDateWithHour, endDateWithHour, "count_heat_hour_")
+    val redisKeys = HourUtil.getRedisKeys(startDateWithHour, endDateWithHour, "count_heat_hour_")
 
     var meanPrefix = ""
     var standardDeviationPrefix = ""

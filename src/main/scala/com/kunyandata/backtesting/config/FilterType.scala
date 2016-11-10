@@ -29,11 +29,14 @@ object FilterType extends Enumeration {
   val SharePrice = Value(208, "share_price_|all_days_value") // 股价
   val ChangePercent = Value(209, "change_percent_|all_days_value") // 涨跌幅，收益率
   val StandardDeviation = Value(210, "count_heat_|standard_deviation") //热度标准差
-  val StandardDeviationWithHour = Value(212,"count_heat_hour_|hour_standard_deviation")
+  val StandardDeviationWithHour = Value(212,"count_heat_hour_|standard_deviation_hour")
+
 
   // 股票相关新闻访问量和股票相关新闻转载量
   val Visit = Value(401, "visit_|all_days_value") // 股票相关新闻的日访问量
+  val VisitHour = Value(1401, "visitHour_|all_days_value_hour") // 股票相关新闻的小时访问量
   val Exposure = Value(402, "exposure_|all_days_value") // 股票相关新闻的日转载量
+  val ExposureHour = Value(1402, "exposureHour_|all_days_value_hour") // 股票相关新闻的月转载量
   val VisitWeek = Value(2401, "visitWeek_|all_days_value") // 股票相关新闻的周访问量
   val ExposureWeek = Value(2402, "exposureWeek_|all_days_value") // 股票相关新闻的周转载量
   val VisitMonth = Value(4401, "visitMonth_|all_days_value") // 股票相关新闻的月访问量
@@ -54,7 +57,9 @@ object FilterType extends Enumeration {
   //行为数据
   val HeatValueDiff = Value(15003, "diff_heat_|conti_value") //查看热度连续X天上涨超过X
   val HeatRank = Value(15004, "count_heat_|conti_rank") //查看热度连续X天出现在topX
+  val HeatRankFalse = Value(15014, "count_heat_|conti_rank_false") //查看热度连续x天以上未出现在topx
   val HeatValue = Value(15005, "count_heat_|conti_value") //查看热度连续X天超过X
+  val HeatValueByHour = Value(16005, "count_heat_hour_|conti_value_hour") //查看热度连续X小时超过X
 
   val ChangeInHolding = Value(40001,"over_or_under_weight_holding|simple") // 增减持
   // 事件

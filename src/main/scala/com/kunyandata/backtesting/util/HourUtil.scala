@@ -31,5 +31,21 @@ object HourUtil {
 
   def getDateStringByTimestampWithHour(timestamp: Long): String = new SimpleDateFormat("yyyy-MM-dd-HH").format(timestamp)
 
-  def getRedisKey(startTime: Long, endTime: Long, redisPrefix: String): List[String] = getAllHourByStartAndEnd(startTime, endTime).map(redisPrefix + _)
+  def getRedisKeys(startTime: Long, endTime: Long, redisPrefix: String): List[String] = getAllHourByStartAndEnd(startTime, endTime).map(redisPrefix + _)
+
+  /**
+    * 通过起止日期的偏移量获得rediskey 主要是在reidis中按小时统计的表中使用
+ *
+    * @param startOffset 开始日期偏移量
+    * @param endOffset 结束日期偏移量
+    * @param redisPrefix redis前缀
+    * @return redis key的集合
+    */
+  def getRedisKeys(startOffset: Int, endOffset: Int, redisPrefix: String): List[String] = {
+
+    val startTimeStamp = CommonUtil.getTimeStampByOffset(startOffset)
+    val endTimeStamp = CommonUtil.getTimeStampByOffset(endOffset)
+    getRedisKeys(startTimeStamp, endTimeStamp, redisPrefix)
+  }
+
 }

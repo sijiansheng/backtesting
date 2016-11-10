@@ -339,6 +339,10 @@ object Rules {
       case "查看热度连续x天上涨超过x" => (15003, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
       case "查看热度连续x天上涨未超过x" => (15003, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
 
+      case "查看热度连续x小时上涨等于x" => (16003, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x小时上涨超过x" => (16003, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x小时上涨未超过x" => (16003, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
+
       case "查看热度连续x天出现在topx" => (15004, s"${queryNumbers(0)},1,${queryNumbers(1)}")
       case "查看热度连续x天未出现在topx" => (15004, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
       case "查看热度连续x天出现在topx~x" => (15004, s"${queryNumbers(0)},${biggerAndSmaller(queryNumbers.slice(1, 3))}")
@@ -347,6 +351,10 @@ object Rules {
       case "查看热度连续x天以上上涨等于x" => (15003, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
       case "查看热度连续x天以上上涨超过x" => (15003, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
       case "查看热度连续x天以上上涨未超过x" => (15003, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
+
+      case "查看热度连续x小时以上上涨等于x" => (16003, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x小时以上上涨超过x" => (16003, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x小时以上上涨未超过x" => (16003, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
 
       case "查看热度连续x天以上出现在topx" => (15004, s"${queryNumbers(0)},1,${queryNumbers(1)}")
       case "查看热度连续x天以上未出现在topx" => (15004, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
@@ -357,10 +365,17 @@ object Rules {
       case "查看热度连续x天超过x" => (15005, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
       case "查看热度连续x天未超过x" => (15005, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
 
+      case "查看热度连续x小时等于x" => (16005, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x小时超过x" => (16005, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x小时未超过x" => (16005, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
+
       case "查看热度连续x天以上等于x" => (15005, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
       case "查看热度连续x天以上超过x" => (15005, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
       case "查看热度连续x天以上未超过x" => (15005, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
 
+      case "查看热度连续x小时以上等于x" => (16005, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度连续x小时以上超过x" => (16005, s"${queryNumbers(0)},${bigger(queryNumbers(1))}")
+      case "查看热度连续x小时以上未超过x" => (16005, s"${queryNumbers(0)},${smaller(queryNumbers(1))}")
 
       case _ => (-1, query)
     }

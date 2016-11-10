@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.concurrent.{Callable, FutureTask}
 
 import com.kunyandata.backtesting.io.RedisHandler
+import com.kunyandata.backtesting.util.HourUtil
 import redis.clients.jedis.Jedis
 
 import scala.collection.mutable
@@ -26,7 +27,7 @@ class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanV
   override def filter(): List[String] = {
 
     val jedis = RedisHandler.getInstance().getJedis
-    val redisKeys = StandardDeviationFilterByHour.getRedisKey(startDateWithHour, endDateWithHour)
+    val redisKeys = HourUtil.getRedisKey(startDateWithHour, endDateWithHour, "count_heat_hour_")
 
     var meanPrefix = ""
     var standardDeviationPrefix = ""
@@ -64,29 +65,6 @@ object StandardDeviationFilterByHour {
     filter
   }
 
-  /**
-    * 根据起止的日期小时得到中间所有的日期和时间间隔
-    *
-    * @param startTimestamp 开始时间戳
-    * @param endTimestamp   结束时间 格式同上
-    * @return 返回时间间隔内的所有小时 如：开始时间为2010101008  结束时间为2010101010  则返回的结果时List("2010101008","2010101009","2010101010")
-    */
-  def getAllHourByStartAndEnd(startTimestamp: Long, endTimestamp: Long): List[String] = {
-
-    val result = ListBuffer[String]()
-
-    for (time <- (startTimestamp / 1000 / 60 / 60) to (endTimestamp / 1000 / 60 / 60)) {
-      result += getDateWithHourStringByTimestamp(time * 1000 * 60 * 60)
-    }
-
-    result.toList
-  }
-
-  def getTimestampByDateWithHour(dateWithHour: String): Long = new SimpleDateFormat("yyyyMMddHH").parse(dateWithHour).getTime
-
-  def getDateWithHourStringByTimestamp(timestamp: Long): String = new SimpleDateFormat("yyyy-MM-dd-HH").format(timestamp)
-
-  def getRedisKey(startTime: Long, endTime: Long): List[String] = getAllHourByStartAndEnd(startTime, endTime).map("count_heat_hour_" + _)
 
   /**
     * 从redis中得到股票和该股票在redis所有key的热度的和值

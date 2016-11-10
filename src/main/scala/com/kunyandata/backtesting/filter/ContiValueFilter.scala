@@ -4,8 +4,10 @@ import java.util.concurrent.{Callable, FutureTask}
 
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil
+import redis.clients.jedis.Jedis
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
   * 过滤出redis中的zset中
@@ -17,16 +19,50 @@ class ContiValueFilter private(prefix: String, days: Int, min: Double, max: Doub
 
   override def filter(): List[String] = {
 
-    val resultSet = mutable.Set[String]()
-    val map = mutable.Map[String, Int]()
     val jedis = RedisHandler.getInstance().getJedis
 
+    val redisKeys = new ListBuffer[String]()
+
     for (i <- start to end) {
+      redisKeys += (prefix + CommonUtil.getDateStr(i))
+    }
 
-      val key = prefix + CommonUtil.getDateStr(i)
-      val result = jedis.zrangeByScore(key, min, max)
+    val result = ContiValueFilterUtil.getContiValue(jedis, redisKeys.toList, days, min, max)
+    jedis.close()
 
-      map.foreach( x => {
+    result
+  }
+
+}
+
+object ContiValueFilter {
+
+  def apply(prefix: String, days: Int, min: Double, max: Double, start: Int, end: Int): ContiValueFilter = {
+
+    val filter = new ContiValueFilter(prefix, days, min, max, start, end)
+
+    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
+      override def call(): List[String] = filter.filter()
+    })
+
+    filter
+  }
+
+}
+
+object ContiValueFilterUtil {
+
+  def getContiValue(jedis: Jedis, redisKeys: List[String], days: Int, min: Double, max: Double): List[String] = {
+
+    val resultSet = mutable.Set[String]()
+    val map = mutable.Map[String, Int]()
+
+
+    redisKeys.foreach(redisKey => {
+
+      val result = jedis.zrangeByScore(redisKey, min, max)
+
+      map.foreach(x => {
 
         val key = x._1
 
@@ -47,26 +83,9 @@ class ContiValueFilter private(prefix: String, days: Int, min: Double, max: Doub
 
       }
 
-    }
-
-    jedis.close()
-
-    resultSet.toList
-  }
-
-}
-
-object ContiValueFilter {
-
-  def apply(prefix: String, days: Int, min: Double, max: Double, start: Int, end: Int): ContiValueFilter = {
-
-    val filter = new ContiValueFilter(prefix, days, min, max, start, end)
-
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
     })
 
-    filter
+    resultSet.toList
   }
 
 }

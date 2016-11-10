@@ -28,7 +28,8 @@ object CommonUtil {
 
   /**
     * 获取距离指定天偏差天数的日期字符串
-    * @param date 指定日期字符串
+    *
+    * @param date   指定日期字符串
     * @param offset 偏差天数
     * @return yyyy-MM-dd格式的代表日期的字符串
     */
@@ -39,8 +40,14 @@ object CommonUtil {
     new SimpleDateFormat(DATE_FORMAT).format(timeStamp)
   }
 
+
+  def getTimeStampByOffset(offset: Int): Long = {
+    System.currentTimeMillis() + offset * 24l * 60 * 60 * 1000
+  }
+
   /**
     * 获取给定时间字符串的时间戳
+    *
     * @param dateString 制定的时间字符串
     * @return 毫秒级的时间戳
     * @author QiuQiu
@@ -76,8 +83,9 @@ object CommonUtil {
 
   /**
     * 获取两个指定日期相差的天数
+    *
     * @param startDate 开始日期
-    * @param endDate 结束日期
+    * @param endDate   结束日期
     * @return 相差天数
     */
   def getOffset(startDate: String, endDate: String): Int = {

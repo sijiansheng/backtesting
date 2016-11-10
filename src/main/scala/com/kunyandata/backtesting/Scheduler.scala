@@ -163,7 +163,7 @@ object Scheduler {
           case "conti_value" =>
             filters += ContiValueFilter(prefix, values(0).toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
           case "conti_rank" =>
-            filters += ContiRankFilter(prefix, values(0).toInt, values(2).toInt, startOffset, endOffset)
+            filters += ContiRankFilter(prefix, values(0).toInt, startOffset, endOffset, values(2).toInt)
           case "single_value" =>
             filters += SingleValueFilter(prefix, values(0).toDouble, values(1).toDouble)
           case "sum_value" =>
@@ -180,6 +180,7 @@ object Scheduler {
             }
           case "hour_standard_deviation" =>
             filters += StandardDeviationFilterByHour(prefix, values(2).toDouble, values(3).toInt, values(4).toInt, values(0).toLong, values(1).toLong, startOffset, endOffset)
+          case "hour_CONTI_value"=>
           case _ =>
             println("unknown")
         }

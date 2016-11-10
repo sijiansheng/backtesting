@@ -12,9 +12,14 @@ import scala.collection.mutable
   * Created by YangShuai
   * Created on 2016/8/24.
   */
-class ContiRankFilter private(prefix: String, days: Int, rank: Int, start: Int, end: Int) extends Filter {
+class ContiRankFilter private(prefix: String, days: Int, start: Int, end: Int, endRank1: Int, startRank1: Int = 0, startRank2: Int = 0, endRank2: Int = 0) extends Filter {
 
   override def filter(): List[String] = {
+
+    getRank(prefix, days, start, end, endRank1, startRank1, startRank2, endRank2)
+  }
+
+  def getRank(prefix: String, days: Int, start: Int, end: Int, endRank1: Int, startRank1: Int = 0, startRank2: Int = 0, endRank2: Int = 0): List[String] = {
 
     val resultSet = mutable.Set[String]()
     val map = mutable.Map[String, Int]()
@@ -23,9 +28,12 @@ class ContiRankFilter private(prefix: String, days: Int, rank: Int, start: Int, 
     for (i <- start to end) {
 
       val key = prefix + CommonUtil.getDateStr(i)
-      val result = jedis.zrevrange(key, 0, -1).toArray().take(rank)
 
-      map.foreach( x => {
+      val stocks = jedis.zrevrange(key, 0, -1).toArray()
+
+      val result = stocks.slice(startRank1, endRank1) ++ stocks.slice(startRank2, endRank2)
+
+      map.foreach(x => {
 
         val key = x._1
 
@@ -51,14 +59,13 @@ class ContiRankFilter private(prefix: String, days: Int, rank: Int, start: Int, 
 
     resultSet.toList
   }
-
 }
 
 object ContiRankFilter {
 
-  def apply(prefix: String, days: Int, rank: Int, start: Int, end: Int): ContiRankFilter = {
+  def apply(prefix: String, days: Int, start: Int, end: Int, rank: Int): ContiRankFilter = {
 
-    val filter = new ContiRankFilter(prefix, days, rank, start, end)
+    val filter = new ContiRankFilter(prefix, days, start, end, rank)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

@@ -36,7 +36,7 @@ object FilterType extends Enumeration {
   val Visit = Value(401, "visit_|all_days_value") // 股票相关新闻的日访问量
   val VisitHour = Value(1401, "visitHour_|all_days_value_hour") // 股票相关新闻的小时访问量
   val Exposure = Value(402, "exposure_|all_days_value") // 股票相关新闻的日转载量
-  val ExposureHour = Value(1402, "exposureHour_|all_days_value_hour") // 股票相关新闻的月转载量
+  val ExposureHour = Value(1402, "exposureHour_|all_days_value_hour") // 股票相关新闻的小时转载量
   val VisitWeek = Value(2401, "visitWeek_|all_days_value") // 股票相关新闻的周访问量
   val ExposureWeek = Value(2402, "exposureWeek_|all_days_value") // 股票相关新闻的周转载量
   val VisitMonth = Value(4401, "visitMonth_|all_days_value") // 股票相关新闻的月访问量

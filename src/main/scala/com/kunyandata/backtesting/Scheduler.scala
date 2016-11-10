@@ -182,7 +182,7 @@ object Scheduler {
             filters += SimpleFilter(prefix, values(0))
           case "standard_deviation" =>
             if (startOffset == endOffset) {
-              filters += StandardDeviationFilter(prefix, values(0).toDouble.toInt, values(1).toDouble.toInt, values(2).toDouble.toInt, startOffset)
+              filters += StandardDeviationFilter(prefix, values(0).toDouble, values(1).toDouble.toInt, values(2).toDouble.toInt, startOffset)
             } else {
               filters += VariousDateStandardDeviationFilter(prefix, values(0).toDouble, values(1).toDouble.toInt, values(2).toDouble.toInt, startOffset, endOffset)
             }

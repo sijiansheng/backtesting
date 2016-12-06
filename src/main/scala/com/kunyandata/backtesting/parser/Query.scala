@@ -35,10 +35,10 @@ object Query {
     val conditionIndexNum = conditionIndex.replaceAll("\\:", "").toInt
 
     // 判断条件是查询语句还是事件名称
-    if (conditionIndexNum < 20000) {
+    if (conditionIndexNum < 200000) {
 
       Rules.template(query.replaceAll(conditionIndex, ""))
-    } else if (conditionIndexNum > 20000) {
+    } else if (conditionIndexNum > 200000) {
 
       (40003, query.replaceAll(conditionIndex, ""))
     } else {

@@ -31,16 +31,15 @@ object Query {
   private def parseByType(query: String) = {
 
     // 获取条件码
-    val conditionIndex = query.substring(0, 2)
-    val conditionIndexNum = conditionIndex.replaceAll("\\:", "").toInt
+    val conditionIndex = query.split("\\:")(0).toInt
 
     // 判断条件是查询语句还是事件名称
-    if (conditionIndexNum < 200000) {
+    if (conditionIndex < 200000) {
 
-      Rules.template(query.replaceAll(conditionIndex, ""))
-    } else if (conditionIndexNum > 200000) {
+      Rules.template(query.replaceAll(s"$conditionIndex:", ""))
+    } else if (conditionIndex > 200000) {
 
-      (40003, query.replaceAll(conditionIndex, ""))
+      (40003, query.replaceAll(s"$conditionIndex:", ""))
     } else {
 
       (-1, s"查询条件错误“$query”：条件不存在或存在非法字符")

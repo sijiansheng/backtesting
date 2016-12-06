@@ -50,6 +50,8 @@ object Scheduler {
 
           val beginTime = System.currentTimeMillis()
           val message = new String(it.next().message())
+
+          BKLogger.warn(message)
           val jsonValue = Json.parse(message)
 
           val uid = (jsonValue \ "uid").as[Long]
@@ -97,7 +99,6 @@ object Scheduler {
 
           val sendMessage = Json.stringify(resultValue)
 
-          BKLogger.warn(message)
           BKLogger.warn(sendMessage)
           producerHandler.sendMessage(sendMessage)
 

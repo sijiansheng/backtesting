@@ -25,20 +25,25 @@ object Query {
 
   /**
     * 将查询条件划分为不同的查询类别，分别进行处理
-    *
     * @param query 查询条件
     * @return
     */
   private def parseByType(query: String) = {
 
-    query.substring(0, 2) match {
+    // 获取条件码
+    val conditionIndex = query.substring(0, 2)
+    val conditionIndexNum = conditionIndex.replaceAll("\\:", "").toInt
 
-      case "1:" => Rules.template(query.replaceAll("1:", ""))
-      case "2:" => Rules.template(query.replaceAll("2:", ""))
-      case "3:" => Rules.template(query.replaceAll("3:", ""))
-      case "4:" => Rules.template(query.replaceAll("4:", ""))
-      case "5:" => (40003, query.replaceAll("5:", ""))
-      case _ => (-1, s"查询条件错误“$query”：条件不存在或存在非法字符")
+    // 判断条件是查询语句还是事件名称
+    if (conditionIndexNum < 20000) {
+
+      Rules.template(query.replaceAll(conditionIndex, ""))
+    } else if (conditionIndexNum > 20000) {
+
+      (40003, query.replaceAll(conditionIndex, ""))
+    } else {
+
+      (-1, s"查询条件错误“$query”：条件不存在或存在非法字符")
     }
   }
 }

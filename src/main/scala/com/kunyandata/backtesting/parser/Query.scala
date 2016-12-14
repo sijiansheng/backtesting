@@ -16,7 +16,6 @@ object Query {
     val queries = query.split("\\+")
 
     val resultTemp = queries.map(query => {
-
       parseByType(query)
     }).groupBy(_._1).map(x => (x._1, x._2.map(_._2).mkString(",")))
 

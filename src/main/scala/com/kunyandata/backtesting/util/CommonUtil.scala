@@ -12,6 +12,7 @@ import com.kunyandata.backtesting.logger.BKLogger
 object CommonUtil {
 
   val DATE_FORMAT = "yyyy-MM-dd"
+  val HOUR_DATE_FORMAT = "yyyy-MM-dd:HH"
 
   /**
     * 获得yyyy-MM-dd格式的代表日期的字符串
@@ -67,8 +68,13 @@ object CommonUtil {
   def getOffset(dateString: String): Int = {
 
     try {
+      var timeStamp: Long = 0L
 
-      val timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(dateString).getTime
+      if (dateString.length > 10) {
+        timeStamp = new SimpleDateFormat(HOUR_DATE_FORMAT).parse(dateString).getTime
+      } else {
+        timeStamp = new SimpleDateFormat(DATE_FORMAT).parse(dateString).getTime
+      }
 
       ((timeStamp - System.currentTimeMillis()) / (24l * 60 * 60 * 1000)).toInt
     } catch {

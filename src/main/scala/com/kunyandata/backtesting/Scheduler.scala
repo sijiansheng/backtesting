@@ -188,7 +188,7 @@ object Scheduler {
               filters += VariousDateStandardDeviationFilter(prefix, values(0).toDouble, values(1).toDouble.toInt, values(2).toDouble.toInt, startOffset, endOffset)
             }
           case "standard_deviation_hour" =>
-            filters += StandardDeviationFilterByHour(prefix, values(2).toDouble, values(3).toDouble.toInt, values(4).toDouble.toInt, values(0).toLong, values(1).toLong, startOffset, endOffset)
+            filters += StandardDeviationFilterByHour(prefix, values(0).toDouble, values(1).toDouble.toInt, values(2).toDouble.toInt,startDate, endDate)
           case _ =>
             println("unknown")
         }
@@ -201,6 +201,7 @@ object Scheduler {
       threadPool.execute(filter.getFutureTask)
     )
 
+    filters.foreach(filter=>println(s"查询条件的返回结果是：[${filter.getResult.mkString(",")}]"))
     for (i <- filters.indices) {
       if (i == 0) {
         stockCodes ++= filters(i).getResult

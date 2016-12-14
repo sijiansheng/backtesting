@@ -22,7 +22,6 @@ class StandardDeviationFilterTest extends FlatSpec with Matchers {
     RedisHandler.init(redisMap.get("ip").get, redisMap.get("port").get.toInt, redisMap.get("auth").get, redisMap.get("db").get.toInt)
     val jedis = RedisHandler.getInstance().getJedis
 
-    //        val prefix = "count_heat_"
     val prefix = "industry_heat_"
     var meanPrefix = ""
     var stdPrefix = ""

@@ -4,11 +4,10 @@ import java.text.SimpleDateFormat
 import java.util.concurrent.{Callable, FutureTask}
 
 import com.kunyandata.backtesting.io.RedisHandler
-import com.kunyandata.backtesting.util.HourUtil
+import com.kunyandata.backtesting.util.{CommonUtil, HourUtil}
 import redis.clients.jedis.Jedis
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 /**
   * redis中按小时求得的热度值之和和标准差平均值的热度比较
@@ -17,15 +16,13 @@ import scala.collection.mutable.ListBuffer
   * @param ratio             比率 倍数即标准差的乘数
   * @param meanValue         平均值标准 7 14 30等即7天平均值 14天平均值 30天平均值
   * @param standardDeviation 标准差标准 7，14 30同上
-  * @param startDateWithHour 查询的起始日期和小时
-  * @param endDateWithHour   查询的结束日期和小时
   */
-class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, startDateWithHour: Long, endDateWithHour: Long, startDay: Int, endDay: Int) extends Filter {
+class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, startDay: String, endDay: String) extends Filter {
 
   override def filter(): List[String] = {
 
     val jedis = RedisHandler.getInstance().getJedis
-    val redisKeys = HourUtil.getRedisKeys(startDateWithHour, endDateWithHour, "count_heat_hour_")
+    val redisKeys = HourUtil.getRedisKeys(getTimeStampByHourString(startDay), getTimeStampByHourString(endDay), "count_heat_hour_")
 
     var meanPrefix = ""
     var standardDeviationPrefix = ""
@@ -48,13 +45,17 @@ class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanV
     resultSet.toList
   }
 
+  def getTimeStampByHourString(timeString: String): Long = {
+    new SimpleDateFormat(CommonUtil.HOUR_DATE_FORMAT).parse(timeString).getTime
+  }
+
 }
 
 object StandardDeviationFilterByHour {
 
-  def apply(prefix: String, multiple: Double, meanCriterion: Int, stdCriterion: Int, startDateWithHour: Long, endDateWithHour: Long, startDay: Int, endDay: Int): StandardDeviationFilterByHour = {
+  def apply(prefix: String, multiple: Double, meanCriterion: Int, stdCriterion: Int, startDay: String, endDay: String): StandardDeviationFilterByHour = {
 
-    val filter = new StandardDeviationFilterByHour(prefix, multiple, meanCriterion, stdCriterion, startDateWithHour, endDateWithHour, startDay, endDay)
+    val filter = new StandardDeviationFilterByHour(prefix, multiple, meanCriterion, stdCriterion, startDay, endDay)
 
     filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
       override def call(): List[String] = filter.filter()

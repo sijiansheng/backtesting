@@ -1,6 +1,5 @@
-package com.kunyandata.backtesting.parser
+package tools.parser
 
-import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.util.CommonUtil
 
 /**
@@ -10,7 +9,6 @@ object Rules {
 
   /**
     * 获取条件语句中的数值（带百分号）
-    *
     * @param query 条件语句
     * @return Array[String]
     */
@@ -25,7 +23,6 @@ object Rules {
 
   /**
     * 将非阿拉伯数字字符表现的数值转化为阿拉伯数字
-    *
     * @param num 带单位的数值
     * @return
     */
@@ -48,7 +45,6 @@ object Rules {
 
   /**
     * 大于类型数据转化为区间表示
-    *
     * @param number 数值
     * @return
     */
@@ -60,7 +56,6 @@ object Rules {
 
   /**
     * 小于类型数据转化为区间表示
-    *
     * @param number 数值
     * @return
     */
@@ -69,10 +64,8 @@ object Rules {
     val result = valueProgress(number)
     s"${Int.MinValue},$result"
   }
-
   /**
     * 等于类型数据转化为区间表示
-    *
     * @param number 数值
     * @return
     */
@@ -84,11 +77,10 @@ object Rules {
 
   /**
     * 大于且小于类型数据转化为区间表示，并且判断数值大小逻辑关系
-    *
     * @param number 数值
     * @return
     */
-  def biggerAndSmaller(number: Array[String]): String = {
+  def biggerAndSmaller(number:Array[String]): String = {
 
     number.length match {
 
@@ -106,13 +98,12 @@ object Rules {
           case _ => "error:数值大小关系错误"
         }
 
-      case _ => "error:条件数值个数错误"
+      case _ =>  "error:条件数值个数错误"
     }
   }
 
   /**
     * 处理时间字符串
-    *
     * @param number 时间字符串
     * @return
     */
@@ -134,14 +125,12 @@ object Rules {
 
   /**
     * 解析方法
-    *
     * @param query 条件语句
     * @return
     */
   def template(query: String): (Int, String) = {
 
     val queryNumbers = getNumbers(query)
-
     var queryTemplate: String = query
 
     queryNumbers.foreach(num => {
@@ -250,8 +239,10 @@ object Rules {
         (210, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
       case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" =>
         (211, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
-      case "查看热度离均差大于x倍前x天日均热度标准差的股票" =>
-        (212, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+
+      case "复牌x天以内" => (213, s"1,0,${queryNumbers(0)}")
+      case "停牌x天以内" => (213, s"0,0,${queryNumbers(0)}")
+      case "上市x天以上" => (214, s"1,${bigger(queryNumbers(0))}")
 
       case "资金流入大于x" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x" => (301, smaller(queryNumbers(0)))

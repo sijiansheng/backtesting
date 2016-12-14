@@ -1,5 +1,6 @@
-package tools.parser
+package com.kunyandata.backtesting.parser
 
+import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.util.CommonUtil
 
 /**
@@ -80,7 +81,7 @@ object Rules {
     * @param number 数值
     * @return
     */
-  def biggerAndSmaller(number:Array[String]): String = {
+  def biggerAndSmaller(number: Array[String]): String = {
 
     number.length match {
 
@@ -234,7 +235,7 @@ object Rules {
       case "收益率小于x" => (209, smaller(queryNumbers(0)))
       case "收益率等于x" => (209, equel(queryNumbers(0)))
       case "收益率大于x小于x" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
- 
+
       case "日均查看热度离均差大于x倍前x天日均热度标准差的股票" =>
         (210, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
       case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" =>

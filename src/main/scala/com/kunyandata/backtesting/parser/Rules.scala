@@ -234,11 +234,13 @@ object Rules {
       case "收益率小于x" => (209, smaller(queryNumbers(0)))
       case "收益率等于x" => (209, equel(queryNumbers(0)))
       case "收益率大于x小于x" => (209, biggerAndSmaller(queryNumbers.slice(0, 2)))
-
+ 
       case "日均查看热度离均差大于x倍前x天日均热度标准差的股票" =>
         (210, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
       case "日均查看热度离均差大于x倍前x天日均热度标准差的行业" =>
         (211, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
+      case "查看热度离均差大于x倍前x天日均热度标准差的股票" =>
+        (212, s"${queryNumbers(0)},${equel(queryNumbers(1))}")
 
       case "复牌x天以内" => (213, s"1,0,${queryNumbers(0)}")
       case "停牌x天以内" => (213, s"0,0,${queryNumbers(0)}")

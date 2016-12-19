@@ -4,6 +4,8 @@ import java.text.{ParseException, SimpleDateFormat}
 
 import com.kunyandata.backtesting.logger.BKLogger
 
+import scala.collection.mutable.ListBuffer
+
 
 /**
   * Created by YangShuai
@@ -112,4 +114,16 @@ object CommonUtil {
 
   }
 
+  def setToList[T <: String](set: java.util.Set[T]): List[T] = {
+
+    val list = new collection.mutable.ListBuffer[T]()
+
+    val iterator = set.iterator()
+
+    while (iterator.hasNext) {
+      list += iterator.next()
+    }
+
+    list.toList
+  }
 }

@@ -31,6 +31,8 @@ object FilterType extends Enumeration {
   val StandardDeviation = Value(210, "count_heat_|standard_deviation") //热度标准差
   val StandardDeviationByIndustry = Value(211, "industry_heat_|standard_deviation") //行业热度标准差
   val StandardDeviationWithHour = Value(212,"count_heat_hour_|standard_deviation_hour")
+  val List = Value(213,"stock_traded_state_|list")
+  val Market = Value(214,"stock_time_to_market_date|market")
 
 
   // 股票相关新闻访问量和股票相关新闻转载量

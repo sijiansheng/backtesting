@@ -245,7 +245,7 @@ object Rules {
 
       case "复牌x天以内" => (213, s"1,0,${queryNumbers(0)}")
       case "停牌x天以内" => (213, s"0,0,${queryNumbers(0)}")
-      case "上市x天以上" => (214, s"1,${bigger(queryNumbers(0))}")
+      case "上市x天以上" => (214, s"${bigger(queryNumbers(0))}")
 
       case "资金流入大于x" => (301, bigger(queryNumbers(0)))
       case "资金流入小于x" => (301, smaller(queryNumbers(0)))

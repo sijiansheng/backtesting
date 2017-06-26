@@ -4,6 +4,8 @@ import java.util.concurrent.{Callable, FutureTask}
 
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil
+import com.kunyandata.backtesting.util.CommonUtil._
+import com.kunyandata.backtesting.{FilterResult, SingleFilterResult, TempFilterResult}
 
 import scala.collection.mutable.ListBuffer
 
@@ -14,48 +16,59 @@ import scala.collection.mutable.ListBuffer
   */
 class ListFilter(prefix: String, listFlag: Int, min: Int, max: Int, start: Int, end: Int) extends Filter {
 
-  def filter(): List[String] = {
+  def filter(): FilterResult = {
 
     val jedis = RedisHandler.getInstance().getJedis
 
     val redisKeys = new ListBuffer[String]()
+    val dates = new ListBuffer[String]()
 
     for (i <- start to end) {
-      redisKeys += (prefix + CommonUtil.getDateStr(i))
+      dates += CommonUtil.getDateStr(i)
     }
 
-    val stocks = redisKeys.map { redisKey =>
-      CommonUtil.setToList(jedis.zrangeByScore(redisKey, listFlag, listFlag))
+    val stocksAndDate = dates.map { date =>
+      (setToList(jedis.zrangeByScore(prefix + date, listFlag, listFlag)), date)
     }.toList
 
-    getStockByQuantity(stocks, min, max)
+    getStockByQuantity(stocksAndDate, min, max)
   }
 
-  def getStockByQuantity(stocks: List[List[String]], min: Int, max: Int): List[String] = {
+  def getStockByQuantity(stocksAndDate: List[(List[String], String)], min: Int, max: Int): FilterResult = {
 
-    val result = ListBuffer[String]()
+    var result = new TempFilterResult()
 
-    val tempMap = collection.mutable.Map[String, Int]()
+    val tempMap = collection.mutable.Map[String, (Int, ListBuffer[SingleFilterResult])]()
 
-    stocks.foreach { everyDayStocks =>
+    stocksAndDate.foreach { everyDayStocksAndDate =>
+
+      val everyDayStocks = everyDayStocksAndDate._1
+      val date = everyDayStocksAndDate._2
 
       everyDayStocks.foreach {
 
         stock =>
+
           if (tempMap.contains(stock)) {
-            tempMap.put(stock, tempMap(stock) + 1)
+            val count = tempMap(stock)._1 + 1
+            var stockAndDate = tempMap(stock)._2
+            stockAndDate.+=(Tuple2(stock, date))
+            tempMap.put(stock, (count, stockAndDate))
           } else {
-            tempMap.put(stock, 1)
+            tempMap.put(stock, (1, new ListBuffer[(String, String)]() += Tuple2(stock, date)))
           }
 
       }
 
     }
+
     tempMap.foreach { stockAndCount =>
-      val count = stockAndCount._2
-      val stock = stockAndCount._1
+      val count = stockAndCount._2._1
+      val stockAndDate = stockAndCount._2._2
+
       if (count >= min && count <= max) {
-        result += stock
+        println(s"min:$min,max:$max,count:$count")
+        result = result ++ stockAndDate
       }
     }
 
@@ -70,12 +83,11 @@ object ListFilter {
 
     val filter = new ListFilter(prefix, listFlag, min, max, start, end)
 
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
+    filter.futureTask = new FutureTask[FilterResult](new Callable[FilterResult] {
+      override def call(): FilterResult = filter.filter()
     })
 
     filter
   }
-
 
 }

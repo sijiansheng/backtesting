@@ -11,19 +11,26 @@ object Query {
     * @param query 查询条件
     * @return
     */
-  def parse(query: String): Map[Int, String] = {
+  def parse(query: String): Array[(Int, String)] = {
 
     val queries = query.split("\\+")
 
+//    val resultTemp = queries.map(query => {
+//      parseByType(query)
+//        }).groupBy(_._1).map(x => (x._1, x._2.map(_._2).mkString(",")))
+
     val resultTemp = queries.map(query => {
       parseByType(query)
-    }).groupBy(_._1).map(x => (x._1, x._2.map(_._2).mkString(",")))
+    }).map(x => (x._1, x._2))
 
+    println(s"queries.size:${queries.size}")
+    println(s"resultTemp.size:${resultTemp.size}")
     resultTemp
   }
 
   /**
     * 将查询条件划分为不同的查询类别，分别进行处理
+    *
     * @param query 查询条件
     * @return
     */
@@ -31,6 +38,7 @@ object Query {
 
     // 获取条件码
     val conditionIndex = query.split("\\:")(0).toInt
+    println(s"conditionIndex:$conditionIndex")
 
     // 判断条件是查询语句还是事件名称
     if (conditionIndex < 200000) {

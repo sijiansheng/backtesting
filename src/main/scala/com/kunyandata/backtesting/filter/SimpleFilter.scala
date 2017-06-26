@@ -2,6 +2,7 @@ package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.{Callable, FutureTask}
 
+import com.kunyandata.backtesting._
 import com.kunyandata.backtesting.io.RedisHandler
 
 /**
@@ -10,13 +11,13 @@ import com.kunyandata.backtesting.io.RedisHandler
   */
 class SimpleFilter private(key: String, field: String) extends Filter {
 
-  override def filter(): List[String] = {
+  override def filter(): FilterResult = {
 
     val jedis = RedisHandler.getInstance().getJedis
     val result = jedis.hget(key, field)
 
     jedis.close()
-    result.split(",").toList
+    result.split(",").map((_, SINGLE_FLAG)).toList
   }
 
 }
@@ -27,8 +28,8 @@ object SimpleFilter {
 
     val filter = new SimpleFilter(key, field)
 
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
+    filter.futureTask = new FutureTask[FilterResult](new Callable[FilterResult] {
+      override def call(): FilterResult = filter.filter()
     })
 
     filter

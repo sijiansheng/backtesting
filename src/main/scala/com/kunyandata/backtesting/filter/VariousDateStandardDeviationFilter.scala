@@ -2,6 +2,7 @@ package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.{Callable, FutureTask}
 
+import com.kunyandata.backtesting._
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil
 
@@ -19,33 +20,24 @@ import scala.collection.mutable
   */
 class VariousDateStandardDeviationFilter private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, startDay: Int, endDay: Int) extends Filter {
 
-  override def filter(): List[String] = {
+  override def filter(): FilterResult = {
 
     val jedis = RedisHandler.getInstance().getJedis
-    val resultMap = mutable.HashMap[String, String]()
+    val resultList = mutable.ListBuffer[SingleFilterResult]()
 
     for (day <- startDay to endDay) {
 
       val result = StandardDeviationFilterUtil.getStock(prefix, ratio, meanValue, standardDeviation, jedis, day)
 
-      result.foreach(stock => {
-
-        var date = CommonUtil.getDateStr(day)
-
-        if (resultMap.contains(stock)) {
-          date = resultMap(stock) + "," + date
-        }
-
-        resultMap.put(stock, date)
-
+      result.foreach(stockAndDate => {
+        resultList += stockAndDate
       })
 
     }
 
-    val reusltList = resultMap.map(stockAndDate => stockAndDate._1 + "->" + stockAndDate._2).toList
     jedis.close()
 
-    reusltList
+    resultList.toList
   }
 
 }
@@ -56,8 +48,8 @@ object VariousDateStandardDeviationFilter {
 
     val filter = new VariousDateStandardDeviationFilter(prefix, multiple, meanCriterion, stdCriterion, startDay, endDay)
 
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
+    filter.futureTask = new FutureTask[FilterResult](new Callable[FilterResult] {
+      override def call(): FilterResult = filter.filter()
     })
 
     filter

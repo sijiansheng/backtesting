@@ -3,6 +3,7 @@ package com.kunyandata.backtesting.filter
 import java.text.SimpleDateFormat
 import java.util.concurrent.{Callable, FutureTask}
 
+import com.kunyandata.backtesting.FilterResult
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.util.CommonUtil
@@ -23,13 +24,13 @@ import scala.collection.mutable
   */
 class StandardDeviationFilter private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, day: Int) extends Filter {
 
-  override def filter(): List[String] = {
+  override def filter(): FilterResult = {
 
     val jedis = RedisHandler.getInstance().getJedis
     val resultSet = StandardDeviationFilterUtil.getStock(prefix, ratio, meanValue, standardDeviation, jedis, day)
     jedis.close()
 
-    resultSet.toList
+    resultSet
   }
 
 }
@@ -40,8 +41,8 @@ object StandardDeviationFilter {
 
     val filter = new StandardDeviationFilter(prefix, multiple, meanCriterion, stdCriterion, day: Int)
 
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
+    filter.futureTask = new FutureTask[FilterResult](new Callable[FilterResult] {
+      override def call(): FilterResult = filter.filter()
     })
 
     filter
@@ -50,7 +51,7 @@ object StandardDeviationFilter {
 
 object StandardDeviationFilterUtil {
 
-  def getStock(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, jedis: Jedis, day: Int): mutable.Set[String] = {
+  def getStock(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, jedis: Jedis, day: Int): FilterResult = {
 
     var meanPrefix = ""
     var standardDeviationPrefix = ""
@@ -66,7 +67,7 @@ object StandardDeviationFilterUtil {
 
     val resultSet = compareHeat(ratio, valuesAndScores, jedis, meanPrefix, meanValue, standardDeviationPrefix, standardDeviation, date)
 
-    resultSet
+    resultSet.map((_, date)).toList
   }
 
   def valueAndScoreToMap(set: java.util.Set[Tuple]): mutable.Map[String, Double] = {
@@ -87,7 +88,7 @@ object StandardDeviationFilterUtil {
     *
     * @param ratio                   比较标准
     * @param conditionHeat           获得的热度的集合
-    * @param jedis
+    * @param jedis，
     * @param meanPrefix              平均值key名在redis中的前缀 如“industry_”
     * @param meanValue               比较的平均值标准 7天14天30天等
     * @param standardDeviationPrefix 标准差key名在redis中的前缀
@@ -106,6 +107,7 @@ object StandardDeviationFilterUtil {
       //获得的某天的所有的股票的平均值的map集合，key为股票代码，value为平均值
       val newMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores(meanPrefix + "heat_mean_" + meanValue + "_" + date, Double.MinValue, Double.MaxValue))
       meanValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores(meanPrefix + "heat_mean_" + meanValue + "_" + date, Double.MinValue, Double.MaxValue))
+
       //获得的某天的所有股票的标准差的map集合，key为股票代码，value为标准差
       standardDeviationValuesAndScoresMap = valueAndScoreToMap(jedis.zrangeByScoreWithScores(standardDeviationPrefix + "heat_std_" + standardDeviation + "_" + date, Double.MinValue, Double.MaxValue))
     } catch {
@@ -129,6 +131,7 @@ object StandardDeviationFilterUtil {
       if (meanScore != Double.MaxValue && standardDeviationScore != Double.MaxValue) {
 
         if (score.toDouble > (ratio * standardDeviationScore + meanScore)) {
+          BKLogger.warn(s"score:${score.toDouble},ratio:${ratio},standardDeviationScore:${standardDeviationScore},meanScore:${meanScore}")
           resultSet += stock
         }
 

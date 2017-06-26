@@ -2,6 +2,7 @@ package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.{Callable, FutureTask}
 
+import com.kunyandata.backtesting._
 import com.kunyandata.backtesting.io.RedisHandler
 import com.kunyandata.backtesting.util.CommonUtil
 
@@ -13,7 +14,7 @@ import scala.collection.mutable
   */
 class SimpleUnionFilter private(prefix: String, event: String, start: Int, end: Int) extends Filter {
 
-  override def filter(): List[String] = {
+  override def filter(): FilterResult = {
 
     var resultSet = mutable.Set[String]()
     val jedis = RedisHandler.getInstance().getJedis
@@ -22,12 +23,13 @@ class SimpleUnionFilter private(prefix: String, event: String, start: Int, end: 
 
       val key = prefix + CommonUtil.getDateStr(i)
       val value = jedis.hget(key, event)
+
       if (value != null)
         resultSet ++= value.split(",").toSet
     }
 
     jedis.close()
-    resultSet.toList
+    resultSet.map(x => (x, SINGLE_FLAG)).toList
   }
 
 }
@@ -38,8 +40,8 @@ object SimpleUnionFilter {
 
     val filter = new SimpleUnionFilter(key, event, start, end)
 
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
+    filter.futureTask = new FutureTask[FilterResult](new Callable[FilterResult] {
+      override def call(): FilterResult = filter.filter()
     })
 
     filter

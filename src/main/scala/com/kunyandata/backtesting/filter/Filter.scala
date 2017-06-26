@@ -2,6 +2,8 @@ package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.FutureTask
 
+import com.kunyandata.backtesting.FilterResult
+
 
 /**
   * Created by YangShuai
@@ -9,12 +11,12 @@ import java.util.concurrent.FutureTask
   */
 abstract class Filter {
 
-  var futureTask: FutureTask[List[String]] = null
+  var futureTask: FutureTask[FilterResult] = null
 
-  def getFutureTask: FutureTask[List[String]] = futureTask
+  def getFutureTask: FutureTask[FilterResult] = futureTask
 
-  def getResult: List[String] = futureTask.get()
+  def getResult: FilterResult = futureTask.get()
 
-  def filter(): List[String]
+  def filter(): FilterResult
 
 }

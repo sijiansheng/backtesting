@@ -9,9 +9,10 @@ import com.kunyandata.backtesting.io.{KafkaConsumerHandler, KafkaProducerHandler
 import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.parser.Query
 import com.kunyandata.backtesting.util.CommonUtil
+import com.kunyandata.backtesting.util.CommonUtil._
+import kafka.consumer.KafkaStream
 import play.api.libs.json.Json
 
-import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -38,7 +39,7 @@ object Scheduler {
     val consumerHandler = KafkaConsumerHandler(kafkaMap.get("zookeeper").get, kafkaMap.get("groupId").get, kafkaMap.get("receiveTopic").get)
     val producerHandler = KafkaProducerHandler(kafkaMap.get("brokerList").get, kafkaMap.get("sendTopic").get)
 
-    val streams = consumerHandler.getStreams
+    val streams: List[KafkaStream[Array[Byte], Array[Byte]]] = consumerHandler.getStreams
 
     for (stream <- streams) {
 
@@ -51,8 +52,8 @@ object Scheduler {
           val beginTime = System.currentTimeMillis()
           val message = new String(it.next().message())
 
-          BKLogger.warn(message)
           val jsonValue = Json.parse(message)
+          println(message)
 
           val uid = (jsonValue \ "uid").as[Long]
           val session = (jsonValue \ "session").as[Long]
@@ -104,7 +105,7 @@ object Scheduler {
 
         } catch {
           case e: Exception =>
-            e.printStackTrace()
+          //            e.printStackTrace()
         }
 
       }
@@ -116,14 +117,21 @@ object Scheduler {
     producerHandler.close()
   }
 
-  def filter(queryMap: Map[Int, String], startDate: String, endDate: String): (mutable.ListBuffer[String], String) = {
+  def filter(queryMap: Array[(Int, String)], startDate: String, endDate: String): (List[String], String) = {
 
-    val wrongOption = queryMap.getOrElse(-1, "")
+    val wrongOption = queryMap.map { x => if (x._1 == -1) {
+      x._2
+    } else {
+      ""
+    }
+    }.mkString
     val startOffset = CommonUtil.getOffset(startDate)
     val endOffset = CommonUtil.getOffset(endDate)
 
     var filters = ListBuffer[Filter]()
-    var stockCodes = mutable.ListBuffer[String]()
+    var tempStockCodes = List[(String, String)]()
+
+    println("queryMap.size:" + queryMap.length)
 
     queryMap.foreach(pair => {
 
@@ -131,6 +139,8 @@ object Scheduler {
       var filterType = ""
 
       val key = pair._1
+
+      println(s"key:$key")
 
       if (key > 0) {
 
@@ -147,18 +157,11 @@ object Scheduler {
           case e: NoSuchElementException =>
           case e: IndexOutOfBoundsException =>
             e.printStackTrace()
-            println(FilterType.apply(key).toString)
-
         }
 
-        try {
-          println("Value: " + FilterType.apply(key).toString)
-        } catch {
-          case e: NoSuchElementException =>
-            println("Unknown enum id: " + key)
-        }
-
-        println(values.mkString(","))
+        println(s"prefix:$prefix,filterType:$filterType")
+        println(s"startOffset:$startOffset,endOffset:$endOffset")
+        println(s"startDate:$startDate,endDate:$endDate")
 
         filterType match {
           case "all_days_value" =>
@@ -168,9 +171,9 @@ object Scheduler {
           case "conti_rank" =>
             filters += ContiRankFilter(prefix, values(0).toDouble.toInt, startOffset, endOffset, values(2).toDouble.toInt, values(1).toDouble.toInt)
           case "conti_value_hour" =>
-            filters += ContiValueFilterByHour(prefix, values(0).toDouble.toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
+            filters += ContiValueFilterByHour(prefix, values(0).toDouble.toInt, values(1).toDouble, values(2).toDouble, startDate, endDate)
           case "all_days_value_hour" =>
-            filters += AllDayValueFilterByHour(prefix, values(0).toDouble, values(1).toDouble, startOffset, endOffset)
+            filters += AllDayValueFilterByHour(prefix, values(0).toDouble, values(1).toDouble, startDate, endDate)
           case "conti_rank_false" =>
             filters += ContiRankFilter(prefix, values(0).toDouble.toInt, startOffset, endOffset, values(2).toDouble.toInt, values(1).toDouble.toInt, values(4).toDouble.toInt, values(3).toDouble.toInt)
           case "single_value" =>
@@ -205,16 +208,26 @@ object Scheduler {
       threadPool.execute(filter.getFutureTask)
     )
 
-    filters.foreach(filter => println(s"查询条件的返回结果是：[${filter.getResult.mkString(",")}]"))
+    println("filter.size：" + filters.size)
+
+    //    filters.foreach(filter => println(s"查询条件的返回结果是：[${filter.getResult.mkString(",")}]"))
+
     for (i <- filters.indices) {
+
       if (i == 0) {
-        stockCodes ++= filters(i).getResult
+        tempStockCodes = filters(i).getResult
       } else {
-        stockCodes = stockCodes.intersect(filters(i).getResult)
+        //        stockCodes = stockCodes.intersect(filters(i).getResult)
+        tempStockCodes = getIntersection(tempStockCodes, filters(i).getResult)
       }
+      println(s"筛选出的股票的数量：${tempStockCodes.size}")
     }
 
-    (stockCodes, wrongOption)
+    tempStockCodes = tempStockCodes.take(3000)
+
+    val result = filterResult2ListString(tempStockCodes)
+
+    (result, wrongOption)
   }
 
 }

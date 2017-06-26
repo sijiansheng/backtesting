@@ -3,27 +3,29 @@ package com.kunyandata.backtesting.filter
 import java.text.SimpleDateFormat
 import java.util.concurrent.{Callable, FutureTask}
 
+import com.kunyandata.backtesting._
 import com.kunyandata.backtesting.io.RedisHandler
+import com.kunyandata.backtesting.logger.BKLogger
 import com.kunyandata.backtesting.util.{CommonUtil, HourUtil}
 import redis.clients.jedis.Jedis
 
 import scala.collection.mutable
 
 /**
-  * redis中按小时求得的热度值之和和标准差平均值的热度比较
+  * redis中按小时求得的热度值之和和前一天标准差平均值的热度比较
   *
   * @param prefix            redis中热度值key的前缀，主要区别是否是产业热度值即是否包含industry
   * @param ratio             比率 倍数即标准差的乘数
   * @param meanValue         平均值标准 7 14 30等即7天平均值 14天平均值 30天平均值
   * @param standardDeviation 标准差标准 7，14 30同上
   */
-class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, startDay: String, endDay: String) extends Filter {
+class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanValue: Int, standardDeviation: Int, startTime: String, endTime: String) extends Filter {
 
-  override def filter(): List[String] = {
+  override def filter(): FilterResult = {
 
     val jedis = RedisHandler.getInstance().getJedis
-    val redisKeys = HourUtil.getRedisKeys(getTimeStampByHourString(startDay), getTimeStampByHourString(endDay), "count_heat_hour_")
-
+    val times = HourUtil.getRedisKeys(getTimeStampByHourString(startTime), getTimeStampByHourString(endTime), "count_heat_hour_")
+    //    BKLogger.warn(redisKeys.mkString(","))
     var meanPrefix = ""
     var standardDeviationPrefix = ""
 
@@ -34,11 +36,10 @@ class StandardDeviationFilterByHour private(prefix: String, ratio: Double, meanV
     }
 
     //得到符合条件的股票热度之和，返回股票和热度的map集合
-    val resultMap = StandardDeviationFilterByHour.getConditionalHeatMap(redisKeys, jedis)
-
+    val resultMap = StandardDeviationFilterByHour.getConditionalHeatMap(times, jedis)
     val date = new SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis() - 1000 * 60 * 60 * 24)
 
-    val resultSet = StandardDeviationFilterUtil.compareHeat(ratio, resultMap, jedis, meanPrefix, meanValue, standardDeviationPrefix, standardDeviation, date)
+    val resultSet = StandardDeviationFilterUtil.compareHeat(ratio, resultMap, jedis, meanPrefix, meanValue, standardDeviationPrefix, standardDeviation, date).map((_, SINGLE_FLAG))
 
     jedis.close()
 
@@ -57,8 +58,8 @@ object StandardDeviationFilterByHour {
 
     val filter = new StandardDeviationFilterByHour(prefix, multiple, meanCriterion, stdCriterion, startDay, endDay)
 
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
+    filter.futureTask = new FutureTask[FilterResult](new Callable[FilterResult] {
+      override def call(): FilterResult = filter.filter()
     })
 
     filter

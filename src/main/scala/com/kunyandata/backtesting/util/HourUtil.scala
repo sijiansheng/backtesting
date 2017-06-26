@@ -18,7 +18,7 @@ object HourUtil {
     */
   def getAllHourByStartAndEnd(startTimestamp: Long, endTimestamp: Long): List[String] = {
 
-    val result = ListBuffer[String]()
+    val result =new ListBuffer[String]()
 
     for (time <- (startTimestamp / 1000 / 60 / 60) to (endTimestamp / 1000 / 60 / 60)) {
       result += getDateStringByTimestampWithHour(time * 1000 * 60 * 60)
@@ -27,17 +27,19 @@ object HourUtil {
     result.toList
   }
 
-  def getTimestampByDateWithHour(dateWithHour: String): Long = new SimpleDateFormat("yyyyMMddHH").parse(dateWithHour).getTime
+  def getTimestampByDateWithHour(dateWithHour: String): Long = new SimpleDateFormat("yyyy-MM-dd-HH").parse(dateWithHour).getTime
 
   def getDateStringByTimestampWithHour(timestamp: Long): String = new SimpleDateFormat("yyyy-MM-dd-HH").format(timestamp)
 
   def getRedisKeys(startTime: Long, endTime: Long, redisPrefix: String): List[String] = getAllHourByStartAndEnd(startTime, endTime).map(redisPrefix + _)
 
+  def getAllHourByStartAndEnd(startTime: String, endTime: String): List[String] = getAllHourByStartAndEnd(getTimestampByDateWithHour(startTime), getTimestampByDateWithHour(endTime))
+
   /**
     * 通过起止日期的偏移量获得rediskey 主要是在reidis中按小时统计的表中使用
- *
+    *
     * @param startOffset 开始日期偏移量
-    * @param endOffset 结束日期偏移量
+    * @param endOffset   结束日期偏移量
     * @param redisPrefix redis前缀
     * @return redis key的集合
     */

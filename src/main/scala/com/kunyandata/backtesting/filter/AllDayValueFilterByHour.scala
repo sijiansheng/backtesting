@@ -2,8 +2,9 @@ package com.kunyandata.backtesting.filter
 
 import java.util.concurrent.{Callable, FutureTask}
 
+import com.kunyandata.backtesting._
 import com.kunyandata.backtesting.io.RedisHandler
-import com.kunyandata.backtesting.util.HourUtil
+import com.kunyandata.backtesting.util.{CommonUtil, HourUtil}
 import redis.clients.jedis.Jedis
 
 import scala.collection.mutable
@@ -12,28 +13,50 @@ import scala.collection.mutable
   * 每小时均大（小）于XXX
   * Created by sijiansheng on 2016/11/10.
   */
-class AllDayValueFilterByHour private(prefix: String, min: Double, max: Double, start: Int, end: Int) extends Filter {
+class AllDayValueFilterByHour private(prefix: String, min: Double, max: Double, startTime: String, endTime: String) extends Filter {
 
-  override def filter(): List[String] = {
+  override def filter(): FilterResult = {
+
+    val resultList = mutable.ListBuffer[SingleFilterResult]()
 
     val jedis = RedisHandler.getInstance().getJedis
-    val redisKeys = HourUtil.getRedisKeys(start, end, prefix)
 
-    val result = AllDayValueFilterBuHourUtil.getValue(jedis, redisKeys, min, max)
+    val allTime = HourUtil.getAllHourByStartAndEnd(startTime, endTime)
+
+    allTime.foreach {
+
+      time =>
+
+        val key = prefix + time
+
+        if (jedis.exists(key)) {
+
+          val result = jedis.zrangeByScore(key, min, max)
+
+          val iterator = result.iterator()
+
+          while (iterator.hasNext) {
+            val code = iterator.next()
+            resultList += ((code, time))
+          }
+
+        }
+    }
+
     jedis.close()
 
-    result
+    resultList.toList
   }
 }
 
 object AllDayValueFilterByHour {
 
-  def apply(prefix: String, min: Double, max: Double, start: Int, end: Int): AllDayValueFilterByHour = {
+  def apply(prefix: String, min: Double, max: Double, startTime: String, endTime: String): AllDayValueFilterByHour = {
 
-    val filter = new AllDayValueFilterByHour(prefix, min, max, start, end)
+    val filter = new AllDayValueFilterByHour(prefix, min, max, startTime, endTime)
 
-    filter.futureTask = new FutureTask[List[String]](new Callable[List[String]] {
-      override def call(): List[String] = filter.filter()
+    filter.futureTask = new FutureTask[FilterResult](new Callable[FilterResult] {
+      override def call(): FilterResult = filter.filter()
     })
 
     filter
@@ -41,45 +64,3 @@ object AllDayValueFilterByHour {
 
 }
 
-object AllDayValueFilterBuHourUtil {
-
-  def getValue(redis: Jedis, redisKeys: List[String], min: Double, max: Double): List[String] = {
-
-    val resultSet = mutable.Set[String]()
-    val jedis = RedisHandler.getInstance().getJedis
-    var init = false
-
-    redisKeys.foreach(redisKey => {
-
-      val result = jedis.zrangeByScore(redisKey, min, max)
-
-      if (!init) {
-
-        val iterator = result.iterator()
-
-        while (iterator.hasNext) {
-          val code = iterator.next()
-          resultSet.add(code)
-        }
-
-        init = true
-      } else {
-
-        val iterator = resultSet.iterator
-
-        while (iterator.hasNext) {
-
-          val code = iterator.next()
-
-          if (!result.contains(code))
-            resultSet.remove(code)
-
-        }
-
-      }
-
-    })
-
-    resultSet.toList
-  }
-}

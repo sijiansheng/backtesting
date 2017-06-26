@@ -10,7 +10,7 @@ class RootLogger {
   var logger = Logger.getLogger("BACK_TESTING_ROOT")
   BasicConfigurator.configure()
   PropertyConfigurator.configure("/home/backtesting/conf/log4j.properties")
-  //  PropertyConfigurator.configure("e://development/se_log4j.properties")
+//          PropertyConfigurator.configure("e://development/se_log4j.properties")
 
   var switch = true
 

@@ -14,11 +14,11 @@ class QueryTest extends FlatSpec with Matchers {
     val str = "4:新闻情感连续7天都是负面情绪"
     val map = Query.parse(str)
 
-    map.keySet.foreach(key => {
-
-      println(FilterType.apply(key).toString)
-      map(key) should be("7,0.5,1")
-    })
+//    map.keySet.foreach(key => {
+//
+//      println(FilterType.apply(key).toString)
+//      map(key) should be("7,0.5,1")
+//    })
 
   }
 

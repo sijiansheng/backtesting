@@ -47,8 +47,10 @@ object FilterType extends Enumeration {
   val ExposureMonth = Value(4402, "exposureMonth_|all_days_value") // 股票相关新闻的月转载量
 
   // 新闻访问量趋势
-  val TrendRise = Value(10001, "trend_|conti_value") // 股票相关新闻访问量趋势的增长
-  val TrendDown = Value(10002, "trend_|conti_value") // 股票相关新闻访问量趋势的下跌
+  val TrendHour = Value(10001, "trendHour_|conti_value_hour") // 股票相关新闻访问量小时趋势的增长/下跌
+  val TrendDay = Value(10002, "trend_|conti_value") // 股票相关新闻访问量天趋势的增长/下跌
+  val TrendWeek = Value(10003, "trendWeek_|conti_value_week") // 股票相关新闻访问量天趋势的增长/下跌
+  val TrendMonth = Value(10004, "trendMonth_|conti_value_month") // 股票相关新闻访问量天趋势的增长/下跌
 
   // 新闻情感
   val SentimentPos = Value(10003, "sentiment_|conti_value") // 股票相关新闻非负面情绪

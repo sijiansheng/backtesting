@@ -172,6 +172,10 @@ object Scheduler {
             filters += ContiRankFilter(prefix, values(0).toDouble.toInt, startOffset, endOffset, values(2).toDouble.toInt, values(1).toDouble.toInt)
           case "conti_value_hour" =>
             filters += ContiValueFilterByHour(prefix, values(0).toDouble.toInt, values(1).toDouble, values(2).toDouble, startDate, endDate)
+          case "conti_value_week" =>
+            filters += ContiValueFilterByWeek(prefix, values(0).toDouble.toInt, values(1).toDouble, values(2).toDouble, startOffset, endOffset)
+          case "conti_value_month" =>
+            filters += ContiValueFilterByMonth(prefix, values(0).toDouble.toInt, values(1).toDouble, values(2).toDouble, startDate, endDate)
           case "all_days_value_hour" =>
             filters += AllDayValueFilterByHour(prefix, values(0).toDouble, values(1).toDouble, startDate, endDate)
           case "conti_rank_false" =>

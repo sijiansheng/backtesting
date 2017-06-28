@@ -364,10 +364,25 @@ object Rules {
 
 
       //新闻趋势
-      case "新闻趋势连续x天上涨" => (10001, s"${queryNumbers(0)},1,1")
-      case "新闻趋势连续x天下降" => (10002, s"${queryNumbers(0)},0,0")
-      case "新闻趋势连续x天以上上涨" => (10001, s"${queryNumbers(0)},1,1")
-      case "新闻趋势连续x天以上下降" => (10002, s"${queryNumbers(0)},0,0")
+      case "新闻趋势连续x小时上涨" => (10001, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x小时下降" => (10001, s"${queryNumbers(0)},-1,-1")
+      case "新闻趋势连续x小时以上上涨" => (10001, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x小时以上下降" => (10001, s"${queryNumbers(0)},-1,-1")
+
+      case "新闻趋势连续x天上涨" => (10002, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x天下降" => (10002, s"${queryNumbers(0)},-1,-1")
+      case "新闻趋势连续x天以上上涨" => (10002, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x天以上下降" => (10002, s"${queryNumbers(0)},-1,-1")
+
+      case "新闻趋势连续x周上涨" => (10003, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x周下降" => (10003, s"${queryNumbers(0)},-1,-1")
+      case "新闻趋势连续x周以上上涨" => (10003, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x周以上下降" => (10003, s"${queryNumbers(0)},-1,-1")
+
+      case "新闻趋势连续x月上涨" => (10004, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x月下降" => (10004, s"${queryNumbers(0)},-1,-1")
+      case "新闻趋势连续x月以上上涨" => (10004, s"${queryNumbers(0)},1,1")
+      case "新闻趋势连续x月以上下降" => (10004, s"${queryNumbers(0)},-1,-1")
 
       //新闻情感
       case "新闻情感连续x天都是非负面情绪" => (10003, s"${queryNumbers(0)},0,0.5")
